@@ -1,0 +1,13 @@
+Automake_Tools/paks/
+Automake_Tools/Rooter/
+Automake_Tools/Stand/
+Automake_Tools2/paks/
+Automake_Tools2/Rooter/
+Automake_Tools2/Stand/
+Automake_Tools2/test/
+*.png
+*.pak
+*.dat
+*.xcf
+*.ods
+*.psd
