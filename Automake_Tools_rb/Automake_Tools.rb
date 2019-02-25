@@ -2,7 +2,7 @@
 
 require 'optparse'
 require 'rb-inotify'
-require 'yaml'
+require 'json'
 
 class AutoMake_Tools
     Pak = '/pak/'
@@ -18,8 +18,7 @@ class AutoMake_Tools
     end
 
     def Run_Mode #AutoMake Tools RumMode Setting Get
-
-        #opts
+      #opts
         r_mode =  ARGV.getopts('r:s:m').select{|key,val| val != false && val != nil}
         r_mode.each{|opts,path|
             self.Set_Working_Dir(path,opts)
