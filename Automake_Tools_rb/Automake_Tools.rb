@@ -3,7 +3,7 @@
 require 'optparse'
 require 'rb-inotify'
 require 'json'
-
+require_relative 'CUI_Cuts.rb'
 class AutoMake_Tools
     Pak = '/pak/'
     MakeObj = 'makeobj_60-2_x64'
@@ -11,7 +11,8 @@ class AutoMake_Tools
     @@w_Dir
     @@w_Mode
     @@e_Dir
-    @@c_List = Array.new() 
+    @@c_List = Array.new()
+    @@w_Worker
     
     def initialize
         self.Run_Mode
@@ -23,12 +24,8 @@ class AutoMake_Tools
         r_mode.each{|opts,path|
             self.Set_Working_Dir(path,opts)
             self.Mode_Selects(opts)
-            
+            self.Worker_Loading
         }       
-    end
-
-    def TimeStanp_Create
-
     end
 
     def Set_Working_Dir(path,opts)
@@ -44,6 +41,14 @@ class AutoMake_Tools
         end
     end
 
+    def Worker_Loading
+      File.open(@@w_Dir + "Worker.json"){|worker|
+        @@w_Worker = JSON.load(worker)
+      }
+      puts @@w_Worker
+      puts "Loading..."
+    end
+    
     def Get_Working_Dir
         return @@w_Dir
     end
@@ -54,30 +59,44 @@ class AutoMake_Tools
             png = file
             dat = png.sub(/png/,'dat')
             if !(File.exist?(dat)) then #pair dat not found return 
-                return  
+              return  
             end
-
+            #json check
+            jf = file.gsub!(/\.\//,'').split("/")
+            
             puts "png:#{file}"
-            puts "Dat:Ok"
+            puts "dat:Ok"
+            
+            if @@w_Worker.has_key?(jf[0]) and @@w_Worker[jf[0]].has_key?(jf[1])  then
+              puts "Dir:"+jf[0]
+              puts "File:"+jf[1]
+            else
+              puts "Target Not found"
+            end
         elsif file !~ /_src.png/ and file =~ /.dat/ then # dat match
             dat = file
             if !(File.exist?(dat.sub(/dat/,'png'))) then #pair png not found return 
                 return  
             end
             puts "dat:#{file}"
-            puts "Png:ok"
+            puts "png:ok"
+        elsif file == "Worker.json" then
+            self.Worker_Loading
         else
             return
         end
         #mode switch
         if @@w_Mode == "Router" then
-            cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
+          #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
+          cmd = "makeobj pak #{@@e_Dir} #{dat}"
         elsif @@w_Mode == "StandAlone"
             e_Dir = File::dirname(dat)+Pak
             puts "Export:"+e_Dir
-            cmd = "#{MakeObj} pak #{e_Dir} #{dat}"
+            #cmd = "#{MakeObj} pak #{e_Dir} #{dat}"
+            cmd = "makeobj pak #{e_Dir} #{dat}"
         end
-        puts system(cmd)
+        #puts system(cmd)
+        puts cmd
     end
 
     def File_PairCheck
