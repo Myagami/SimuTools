@@ -1,1 +1,10 @@
-0w
+{
+	"Project_X":{
+		"Project_X.png":{
+			"X":5,"Y":3
+		},
+		"Project_X2.png":{
+			"X":3,"Y":5
+		}
+	}
+}

@@ -52,21 +52,17 @@ class Cui_Cuts
       print "X_Offset: "
       puts (ct_x - 1) * 16
       print "Y_Offset: "
-      puts (ct_y - 1) * 16
+      puts ((ct_y - 1) * 16)
       
       x_pos = @Crop_X.to_i + (ct_x.to_i - 1) * 16
-      y_pos = @Crop_Y.to_i - (ct_y.to_i - 1) * 16
-
-      print "Y_pos: "
-      puts y_pos
-      print "X_pos: "
-      puts x_pos
-
+      y_pos = (@Crop_Y.to_i - (ct_y.to_i - 1) * 16)
       print "----\n"
       #x
       for ct_x in 1..X_Size.to_i do
         print "X: " 
         puts ct_x.to_i
+        print "Y: " 
+        puts ct_y.to_i
         
         print "Y_pos: "
         puts y_pos 

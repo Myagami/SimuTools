@@ -13,9 +13,10 @@ class AutoMake_Tools
     @@e_Dir
     @@c_List = Array.new()
     @@w_Worker
-    
+    @@c_Cuts
     def initialize
-        self.Run_Mode
+      self.Run_Mode
+      
     end
 
     def Run_Mode #AutoMake Tools RumMode Setting Get
@@ -70,6 +71,13 @@ class AutoMake_Tools
             if @@w_Worker.has_key?(jf[0]) and @@w_Worker[jf[0]].has_key?(jf[1])  then
               puts "Dir:"+jf[0]
               puts "File:"+jf[1]
+              puts "X:" + @@w_Worker[jf[0]][jf[1]]['X'].to_s + " Y:" + @@w_Worker[jf[0]][jf[1]]["Y"].to_s
+               c_Cuts = Cui_Cuts.new(file)
+               c_Cuts.XY_Pos(@@w_Worker[jf[0]][jf[1]]["X"].to_i,@@w_Worker[jf[0]][jf[1]]["Y"].to_i)
+               c_Cuts.Image_Props
+               c_Cuts.Image_Cuts
+               c_Cuts.Image_Write
+              #c_C_Cuts.XY_Pos
             else
               puts "Target Not found"
             end

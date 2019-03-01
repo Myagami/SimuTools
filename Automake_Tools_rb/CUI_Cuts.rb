@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 #Argvars
-In_Image = ARGV[0] 
-X_Size = ARGV[1] 
-Y_Size  = ARGV[2] 
+#In_Image = ARGV[0] 
+#X_Size = ARGV[1] 
+#Y_Size  = ARGV[2] 
 
 #private vars
 
@@ -13,11 +13,10 @@ require 'inifile'
 
 #crop
 class Cui_Cuts
-  def initialize(in_image) #start
-    @In_Image = in_image
-    @Out_Image = In_Image.sub(/.png/,'_src.png')
-    @image = Magick::ImageList.new(In_Image)
-    @image_Crops = Array.new(Y_Size.to_i).map{Array.new(X_Size.to_i)}
+  def initialize(in_Image) #start
+    puts in_Image 
+    @Out_Image = in_Image.sub(/.png/,'_src.png')
+    @image = Magick::ImageList.new(in_Image)
 
     #@Out_Image = 
   end
@@ -25,6 +24,7 @@ class Cui_Cuts
   def XY_Pos(x_size,y_size)
     @X_Size = x_size
     @Y_Size = y_size    
+    @image_Crops = Array.new(@Y_Size.to_i).map{Array.new(@X_Size.to_i)}
   end
 
   def Image_Props
@@ -64,7 +64,7 @@ class Cui_Cuts
 
       print "----\n"
       #x
-      for ct_x in 1..X_Size.to_i do
+      for ct_x in 1..@X_Size.to_i do
         print "X: " 
         puts ct_x.to_i
         
@@ -132,7 +132,7 @@ class Cui_Cuts
   end
 
   def Image_Write
-    exb = Magick::Image.new(X_Size.to_i*64,Y_Size.to_i*64){
+    exb = Magick::Image.new(@X_Size.to_i*64,@Y_Size.to_i*64){
        self.background_color="#E7FFFF"
     }
 
