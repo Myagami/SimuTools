@@ -52,10 +52,25 @@ class Cui_Cuts
       print "X_Offset: "
       puts (ct_x - 1) * 16
       print "Y_Offset: "
-      puts ((ct_y - 1) * 16)
+      print "cropy:"
+      puts (@Y_Size.to_i - (ct_y.to_i - 1)) - 1
       
-      x_pos = @Crop_X.to_i + (ct_x.to_i - 1) * 16
-      y_pos = (@Crop_Y.to_i - (ct_y.to_i - 1) * 16)
+      if @Crop_Y.to_i <= 2 || ct_y.to_i == 1 then
+        x_pos = @Crop_X.to_i + (ct_x.to_i - 1) * 16
+      elsif @Y_Size.to_i == ct_y.to_i then
+        x_pos = (@Crop_X.to_i + (ct_x.to_i - 1) * 16) + (@Y_Size.to_i * 16)
+      else
+        print "X_Offsets:"
+        puts (@Y_Size.to_i - ct_y.to_i) * 16
+        x_pos = (@Crop_X.to_i + (ct_x.to_i - 1) * 16) + ((@Y_Size.to_i - ct_x.to_i) * 16)
+      end
+
+      
+      if @Crop_Y.to_i <= 2 || ct_y.to_i >= 3 then
+        y_pos = @Crop_Y.to_i - (ct_y.to_i - 1) * 16
+      else
+        y_pos = (@Crop_Y.to_i - (ct_y.to_i - 1) * 16) + 16
+      end
       print "----\n"
       #x
       for ct_x in 1..X_Size.to_i do
@@ -89,32 +104,32 @@ class Cui_Cuts
                           34,63,
                           63,63)
         #center
-        if ct_y == 1 && ct_x != 1 then
-          print "1st line\n"
-          mask_Path.polygon(0,0,
-                            0,47,
-                            30,32,
-                            31,32,
-                            31,0)
-        elsif ct_y >= 2 && ct_x == 1 then
-          mask_Path.polygon(32,0,
-                            32,32,
-                            33,32,
-                            63,47,
-                            63,0)
-        elsif ct_y >= 2 && ct_x != 1 then
-          mask_Path.polygon(0,0,
-                            0,47,
-                            30,32,
-                            31,32,
-                            31,0)
-          mask_Path.polygon(32,0,
-                            32,32,
-                            33,32,
-                            63,47,
-                            63,0)
-          print "center Y\n" 
-        end
+        # if ct_y <= 1 && ct_x > 1 then
+        #   print "1st line\n"
+        #   mask_Path.polygon(0,0,
+        #                     0,47,
+        #                     30,32,
+        #                     31,32,
+        #                     31,0)
+        # elsif ct_y > 1 && ct_x == 1 then
+        #   mask_Path.polygon(32,0,
+        #                     32,32,
+        #                     33,32,
+        #                     63,47,
+        #                     63,0)
+        #  elsif ct_y > 1 && ct_x != 1 then
+        #    mask_Path.polygon(0,0,
+        #                      0,47,
+        #                      30,32,
+        #                      31,32,
+        #                      31,0)
+        #    mask_Path.polygon(32,0,
+        #                      32,32,
+        #                      33,32,
+        #                      63,47,
+        #                      63,0)
+        #    print "center Y\n" 
+        #end
         mask_Path.draw(mask)
         
 
@@ -123,7 +138,7 @@ class Cui_Cuts
         x_pos = x_pos - 32
         y_pos = y_pos - 16
       end
-      print "---------\n"
+      print "---------\n\n"
     end    
   end
 
