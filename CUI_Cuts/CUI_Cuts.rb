@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# coding: utf-8
 
 #Argvars
 In_Image = ARGV[0] 
@@ -31,7 +32,7 @@ class Cui_Cuts
     print "Export: "
     puts @Out_Image
 
-    #props
+    #propsっっf
     print "Width:"
     puts @image.columns
     print "Height:"
@@ -41,9 +42,10 @@ class Cui_Cuts
     print "Y:"
     puts @Y_Size
 
-    @Crop_X = (@X_Size.to_i - 1) * 32
+    @Crop_X = (@X_Size.to_i - 1) * 16
     puts "CropX:"+@Crop_X.to_s
-    @Crop_Y = (@Crop_X / 2) + 16
+    #@Crop_Y = (@Crop_X.to_i / 2) + ((@Y_Size.to_i) * 16)
+    @Crop_Y = ((@Y_Size.to_i) * 16)
     puts "CropY:"+@Crop_Y.to_s
   end
 
@@ -51,23 +53,28 @@ class Cui_Cuts
     ct_x = 1
     #y
     for ct_y , y_pos in 1..@Y_Size.to_i do
-      x_pos = @Crop_X.to_i + (ct_x.to_i - 1) + ((ct_y.to_i - 1) * 16)
-      # if @Crop_Y.to_i <= 2  || ct_y.to_i <= 1 then
-      #   
-      # elsif @Y_Size.to_i == ct_y.to_i then
-      #   x_pos = (@Crop_X.to_i + (ct_x.to_i - 1) * 16) + (@Y_Size.to_i * 16)
-      # else
-      #   print "X_Offsets:"
-      #   puts (@Y_Size.to_i - ct_y.to_i) * 16
-      #   x_pos = (@Crop_X.to_i + (ct_x.to_i - 1) * 16) + ((@Y_Size.to_i - ct_x.to_i) * 16)
-      # end
 
-      y_pos = @Crop_Y.to_i - (ct_y.to_i - 1) * 16
-      # if @Crop_Y.to_i <= 2 || ct_y.to_i >= 3 then
-      #   y_pos = @Crop_Y.to_i - (ct_y.to_i - 1) * 16
-      # else
-      #   y_pos = (@Crop_Y.to_i - (ct_y.to_i - 1) * 16) + 16
-      # end
+      puts "ct_x:#{ct_x.to_s}" 
+      puts "ct_y:#{ct_y.to_s}"
+      
+     if @Y_Size.to_i <=2 then 
+        x_pos = ct_x.to_i == 1 ? @Crop_X.to_i + ((ct_x.to_i) * 16) : @Crop_X.to_i + 16
+        y_pos = @Crop_Y.to_i - ((ct_y.to_i - 1) * 16)
+     elsif @Y_Size.to_i > @X_Size.to_i then
+       if ct_x.to_i == 1 then
+         x_pos = @Crop_X.to_i + 16
+       elsif @Y_Size.to_i == ct_y.to_i then
+         x_pos = @Crop_X.to_i + ((@X_Size.to_i + (ct_x.to_i - 1)) * 16) + 32
+       else
+         x_pos = @Crop_X.to_i + ((@X_Size.to_i + (ct_x.to_i - 1)) * 16)
+       end
+       y_pos = @Y_Size.to_i == ct_y.to_i ? @Crop_Y.to_i - (ct_x.to_i * 16) : @Crop_Y.to_i - ((ct_y.to_i - 1) * 16)
+      else
+        x_pos = ct_x.to_i == 1 ? @Crop_X.to_i + 16 : @Crop_X.to_i + (ct_y.to_i + 16)
+        y_pos = @Y_Size.to_i == ct_y.to_i ? @Crop_Y.to_i : @Crop_Y.to_i
+      end
+      #y_pos = @Crop_Y.to_i - (ct_y.to_i - 1) * 16
+      
       print "----\n"
       #x
       for ct_x in 1..X_Size.to_i do
