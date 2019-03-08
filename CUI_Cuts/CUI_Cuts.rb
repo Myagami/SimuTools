@@ -42,10 +42,18 @@ class Cui_Cuts
     print "Y:"
     puts @Y_Size
 
-    @Crop_X = (@X_Size.to_i - 1) * 16
+    @Crop_X = (@X_Size.to_i - 1) * 32
     puts "CropX:"+@Crop_X.to_s
-    #@Crop_Y = (@Crop_X.to_i / 2) + ((@Y_Size.to_i) * 16)
-    @Crop_Y = ((@Y_Size.to_i) * 16)
+    if @Y_Size.to_i > @X_Size.to_i then
+      puts "Y > X"
+      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i / 2) * 32) + 16 : ((@Y_Size.to_i - 1) * 32) - 16
+    elsif @Y_Size.to_i == @X_Size.to_i then
+      @Crop_Y = (@Y_Size.to_i - 1) * 32
+    else
+      puts "Y < X"
+      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : ((@Y_Size.to_i - 1) * 32) - 16
+    end
+    
     puts "CropY:"+@Crop_Y.to_s
   end
 
@@ -57,23 +65,12 @@ class Cui_Cuts
       puts "ct_x:#{ct_x.to_s}" 
       puts "ct_y:#{ct_y.to_s}"
       
-     if @Y_Size.to_i <=2 then 
-        x_pos = ct_x.to_i == 1 ? @Crop_X.to_i + ((ct_x.to_i) * 16) : @Crop_X.to_i + 16
-        y_pos = @Crop_Y.to_i - ((ct_y.to_i - 1) * 16)
-     elsif @Y_Size.to_i > @X_Size.to_i then
-       if ct_x.to_i == 1 then
-         x_pos = @Crop_X.to_i + 16
-       elsif @Y_Size.to_i == ct_y.to_i then
-         x_pos = @Crop_X.to_i + ((@X_Size.to_i + (ct_x.to_i - 1)) * 16) + 32
-       else
-         x_pos = @Crop_X.to_i + ((@X_Size.to_i + (ct_x.to_i - 1)) * 16)
-       end
-       y_pos = @Y_Size.to_i == ct_y.to_i ? @Crop_Y.to_i - (ct_x.to_i * 16) : @Crop_Y.to_i - ((ct_y.to_i - 1) * 16)
+      x_pos = ct_y.to_i == 1 ? @Crop_X.to_i + ((ct_y.to_i - 1) * 16) : @Crop_X.to_i + ((ct_y.to_i - 1) * 16) + ((ct_y.to_i - 1) * 16)
+      if ct_y.to_i == 1 then
+        y_pos = @Crop_Y
       else
-        x_pos = ct_x.to_i == 1 ? @Crop_X.to_i + 16 : @Crop_X.to_i + (ct_y.to_i + 16)
-        y_pos = @Y_Size.to_i == ct_y.to_i ? @Crop_Y.to_i : @Crop_Y.to_i
+        y_pos = @Crop_Y.to_i - ((ct_y.to_i - 1) * 16)
       end
-      #y_pos = @Crop_Y.to_i - (ct_y.to_i - 1) * 16
       
       print "----\n"
       #x
@@ -108,32 +105,32 @@ class Cui_Cuts
                           34,63,
                           63,63)
         #center
-        # if ct_y <= 1 && ct_x > 1 then
-        #   print "1st line\n"
-        #   mask_Path.polygon(0,0,
-        #                     0,47,
-        #                     30,32,
-        #                     31,32,
-        #                     31,0)
-        # elsif ct_y > 1 && ct_x == 1 then
-        #   mask_Path.polygon(32,0,
-        #                     32,32,
-        #                     33,32,
-        #                     63,47,
-        #                     63,0)
-        #  elsif ct_y > 1 && ct_x != 1 then
-        #    mask_Path.polygon(0,0,
-        #                      0,47,
-        #                      30,32,
-        #                      31,32,
-        #                      31,0)
-        #    mask_Path.polygon(32,0,
-        #                      32,32,
-        #                      33,32,
-        #                      63,47,
-        #                      63,0)
-        #    print "center Y\n" 
-        #end
+        if ct_y <= 1 && ct_x > 1 then
+          print "1st line\n"
+          mask_Path.polygon(0,0,
+                            0,47,
+                            30,32,
+                            31,32,
+                            31,0)
+        elsif ct_y > 1 && ct_x == 1 then
+          mask_Path.polygon(32,0,
+                            32,32,
+                            33,32,
+                            63,47,
+                            63,0)
+         elsif ct_y > 1 && ct_x != 1 then
+           mask_Path.polygon(0,0,
+                             0,47,
+                             30,32,
+                             31,32,
+                             31,0)
+           mask_Path.polygon(32,0,
+                             32,32,
+                             33,32,
+                             63,47,
+                             63,0)
+           print "center Y\n" 
+        end
         mask_Path.draw(mask)
         
 
