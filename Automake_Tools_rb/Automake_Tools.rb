@@ -63,21 +63,22 @@ class AutoMake_Tools
               return  
             end
             #json check
-            jf = file.gsub!(/\.\//,'').split("/")
-            
+            jf = file.to_s.split("/")
+            jf.shift
+            puts "---------"
+            puts jf
+            puts "---------"
             puts "png:#{file}"
             puts "dat:Ok"
-            
             if @@w_Worker.has_key?(jf[0]) and @@w_Worker[jf[0]].has_key?(jf[1])  then
               puts "Dir:"+jf[0]
               puts "File:"+jf[1]
               puts "X:" + @@w_Worker[jf[0]][jf[1]]['X'].to_s + " Y:" + @@w_Worker[jf[0]][jf[1]]["Y"].to_s
-               c_Cuts = Cui_Cuts.new(file)
-               c_Cuts.XY_Pos(@@w_Worker[jf[0]][jf[1]]["X"].to_i,@@w_Worker[jf[0]][jf[1]]["Y"].to_i)
-               c_Cuts.Image_Props
-               c_Cuts.Image_Cuts
-               c_Cuts.Image_Write
-              #c_C_Cuts.XY_Pos
+                c_Cuts = Cui_Cuts.new(file.to_s)
+                c_Cuts.XY_Pos(@@w_Worker[jf[0]][jf[1]]["X"].to_i,@@w_Worker[jf[0]][jf[1]]["Y"].to_i)
+               # c_Cuts.Image_Props
+               # c_Cuts.Image_Cuts
+               # c_Cuts.Image_Write
             else
               puts "Target Not found"
             end

@@ -1,30 +1,32 @@
 #!/usr/bin/env ruby
+# coding: utf-8
 
 #Argvars
-#In_Image = ARGV[0] 
-#X_Size = ARGV[1] 
-#Y_Size  = ARGV[2] 
-
 #private vars
 
 #require and new instance
 require 'rmagick'
-require 'inifile'
+#require 'inifile'
 
 #crop
 class Cui_Cuts
-  def initialize(in_Image) #start
-    puts in_Image 
-    @Out_Image = in_Image.sub(/.png/,'_src.png')
-    @image = Magick::ImageList.new(in_Image)
-
+  def initialize(in_image) #start
+    @suffix = "_src"
+    @In_Image = in_image
+    @Out_Image = @In_Image.sub(/.png/,'_src.png')
+    @image = Magick::ImageList.new(@In_Image)
     #@Out_Image = 
   end
 
+  def Image_Suffix(suf)
+    @suffix = suf.to_s
+  end
+  
   def XY_Pos(x_size,y_size)
     @X_Size = x_size
     @Y_Size = y_size    
     @image_Crops = Array.new(@Y_Size.to_i).map{Array.new(@X_Size.to_i)}
+
   end
 
   def Image_Props
@@ -42,31 +44,42 @@ class Cui_Cuts
     puts @Y_Size
 
     @Crop_X = (@X_Size.to_i - 1) * 32
-    @Crop_Y = (@Crop_X / 2) + 16
+    puts "CropX:"+@Crop_X.to_s
+    if @Y_Size.to_i > @X_Size.to_i then
+      puts "Y > X"
+      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i / 2) * 32) + 16 : ((@Y_Size.to_i - 1) * 32) - 16
+    elsif @Y_Size.to_i == @X_Size.to_i then
+      @Crop_Y = (@Y_Size.to_i - 1) * 32
+    else
+      puts "Y < X"
+      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : ((@Y_Size.to_i - 1) * 32) - 16
+    end
+    
+    puts "CropY:"+@Crop_Y.to_s
   end
 
   def Image_Cuts #Image Cutter
     ct_x = 1
     #y
     for ct_y , y_pos in 1..@Y_Size.to_i do
-      print "X_Offset: "
-      puts (ct_x - 1) * 16
-      print "Y_Offset: "
-      puts (ct_y - 1) * 16
+
+      puts "ct_x:#{ct_x.to_s}" 
+      puts "ct_y:#{ct_y.to_s}"
       
-      x_pos = @Crop_X.to_i + (ct_x.to_i - 1) * 16
-      y_pos = @Crop_Y.to_i - (ct_y.to_i - 1) * 16
-
-      print "Y_pos: "
-      puts y_pos
-      print "X_pos: "
-      puts x_pos
-
+      x_pos = ct_y.to_i == 1 ? @Crop_X.to_i + ((ct_y.to_i - 1) * 16) : @Crop_X.to_i + ((ct_y.to_i - 1) * 16) + ((ct_y.to_i - 1) * 16)
+      if ct_y.to_i == 1 then
+        y_pos = @Crop_Y
+      else
+        y_pos = @Crop_Y.to_i - ((ct_y.to_i - 1) * 16)
+      end
+      
       print "----\n"
       #x
-      for ct_x in 1..@X_Size.to_i do
+      for ct_x in 1..X_Size.to_i do
         print "X: " 
         puts ct_x.to_i
+        print "Y: " 
+        puts ct_y.to_i
         
         print "Y_pos: "
         puts y_pos 
@@ -93,31 +106,31 @@ class Cui_Cuts
                           34,63,
                           63,63)
         #center
-        if ct_y == 1 && ct_x != 1 then
+        if ct_y <= 1 && ct_x > 1 then
           print "1st line\n"
           mask_Path.polygon(0,0,
                             0,47,
                             30,32,
                             31,32,
                             31,0)
-        elsif ct_y >= 2 && ct_x == 1 then
+        elsif ct_y > 1 && ct_x == 1 then
           mask_Path.polygon(32,0,
                             32,32,
                             33,32,
                             63,47,
                             63,0)
-        elsif ct_y >= 2 && ct_x != 1 then
-          mask_Path.polygon(0,0,
-                            0,47,
-                            30,32,
-                            31,32,
-                            31,0)
-          mask_Path.polygon(32,0,
-                            32,32,
-                            33,32,
-                            63,47,
-                            63,0)
-          print "center Y\n" 
+         elsif ct_y > 1 && ct_x != 1 then
+           mask_Path.polygon(0,0,
+                             0,47,
+                             30,32,
+                             31,32,
+                             31,0)
+           mask_Path.polygon(32,0,
+                             32,32,
+                             33,32,
+                             63,47,
+                             63,0)
+           print "center Y\n" 
         end
         mask_Path.draw(mask)
         
@@ -127,12 +140,12 @@ class Cui_Cuts
         x_pos = x_pos - 32
         y_pos = y_pos - 16
       end
-      print "---------\n"
+      print "---------\n\n"
     end    
   end
 
   def Image_Write
-    exb = Magick::Image.new(@X_Size.to_i*64,@Y_Size.to_i*64){
+    exb = Magick::Image.new(X_Size.to_i*64,Y_Size.to_i*64){
        self.background_color="#E7FFFF"
     }
 
