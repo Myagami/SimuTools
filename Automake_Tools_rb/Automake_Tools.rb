@@ -89,7 +89,7 @@ class AutoMake_Tools
             end
             puts "dat:#{file}"
             puts "png:ok"
-        elsif file == "Worker.json" then
+        elsif file =~ /Worker.json/ then
             self.Worker_Loading
         else
             return
@@ -97,7 +97,7 @@ class AutoMake_Tools
         #mode switch
         if @@w_Mode == "Router" then
           #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
-          cmd = "makeobj pak #{@@e_Dir} #{dat}"
+          cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
         elsif @@w_Mode == "StandAlone"
             e_Dir = File::dirname(dat)+Pak
             puts "Export:"+e_Dir
@@ -135,7 +135,7 @@ AMT.Tool_Propertys
 #AMT.Path_Monitor
 
 notif = INotify::Notifier.new 
-notif.watch(AMT.Get_Working_Dir,:modify,:close_write,:recursive){
+notif.watch(AMT.Get_Working_Dir,:close_write,:recursive){
     |fev|
     #puts fev
     file = fev.absolute_name
