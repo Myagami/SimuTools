@@ -52,7 +52,8 @@ class Cui_Cuts
       @Crop_Y = (@Y_Size.to_i - 1) * 32
     else
       puts "Y < X"
-      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : ((@Y_Size.to_i - 1) * 32) - 16
+      #@Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : ((@Y_Size.to_i - 1) * 32) - 16
+      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : @Y_Size.to_i  * 32
     end
     
     puts "CropY:"+@Crop_Y.to_s
@@ -75,7 +76,7 @@ class Cui_Cuts
       
       print "----\n"
       #x
-      for ct_x in 1..X_Size.to_i do
+      for ct_x in 1..@X_Size.to_i do
         print "X: " 
         puts ct_x.to_i
         print "Y: " 
@@ -145,7 +146,7 @@ class Cui_Cuts
   end
 
   def Image_Write
-    exb = Magick::Image.new(X_Size.to_i*64,Y_Size.to_i*64){
+    exb = Magick::Image.new(@X_Size.to_i*64,@Y_Size.to_i*64){
        self.background_color="#E7FFFF"
     }
 
