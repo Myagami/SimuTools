@@ -74,11 +74,11 @@ class AutoMake_Tools
               puts "Dir:"+jf[0]
               puts "File:"+jf[1]
               puts "X:" + @@w_Worker[jf[0]][jf[1]]['X'].to_s + " Y:" + @@w_Worker[jf[0]][jf[1]]["Y"].to_s
-                c_Cuts = Cui_Cuts.new(file.to_s)
-                c_Cuts.XY_Pos(@@w_Worker[jf[0]][jf[1]]["X"].to_i,@@w_Worker[jf[0]][jf[1]]["Y"].to_i)
-                c_Cuts.Image_Props
-                c_Cuts.Image_Cuts
-                c_Cuts.Image_Write
+                 c_Cuts = Cui_Cuts.new(file.to_s)
+                 c_Cuts.XY_Pos(@@w_Worker[jf[0]][jf[1]]["X"].to_i,@@w_Worker[jf[0]][jf[1]]["Y"].to_i)
+                 c_Cuts.Image_Props
+                 c_Cuts.Image_Cuts
+                 c_Cuts.Image_Write
             else
               puts "Target Not found"
             end
