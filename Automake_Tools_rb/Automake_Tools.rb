@@ -97,23 +97,15 @@ class AutoMake_Tools
         #mode switch
         if @@w_Mode == "Router" then
           #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
-          cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
+          cmd = "#{MakeObj} pak ./#{@@e_Dir} ./#{dat}"
         elsif @@w_Mode == "StandAlone"
             e_Dir = File::dirname(dat)+Pak
             puts "Export:"+e_Dir
             #cmd = "#{MakeObj} pak #{e_Dir} #{dat}"
-            cmd = "makeobj pak #{e_Dir} #{dat}"
+            cmd = "#{MakeObj} pak ./#{@@e_Dir} ./#{dat}"
         end
-        #puts system(cmd)
-        puts cmd
-    end
-
-    def File_PairCheck
-
-    end
-
-    def Config_Loader
-        
+        puts system(cmd)
+        #puts cmd
     end
 
     def Mode_Selects(opts)
