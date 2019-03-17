@@ -43,11 +43,16 @@ class AutoMake_Tools
     end
 
     def Worker_Loading
-      File.open(@@w_Dir + "Worker.json"){|worker|
-        @@w_Worker = JSON.load(worker)
-      }
-      puts @@w_Worker
-      puts "Loading..."
+      worker_f = @@w_Dir + "Worker.json"
+      if (File.exist?(worker_f)) then #pair dat not found return 
+        File.open(worker_f){|worker|
+          @@w_Worker = JSON.load(worker)
+        }
+        puts @@w_Worker
+        puts "Loading..."
+        return  
+      end
+
     end
     
     def Get_Working_Dir
