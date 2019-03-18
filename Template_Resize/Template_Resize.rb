@@ -41,7 +41,8 @@ class Template_Resize
       @Crop_Y = ((@Y_Size.to_i + 1) * 32)
     else
       puts "Y < X"
-      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i + 1) * 32) + 32 : (@Y_Size.to_i * 32) + 16
+      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i + 1) * 32) + 32 : @Y_Size.to_i  * 32
+      #@Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i + 1) * 32) + 32 : (@Y_Size.to_i * 32) + 16
     end
     puts "----Crop---"
     puts "X_Pos:#{@Crop_X.to_i}"
