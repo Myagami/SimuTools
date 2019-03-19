@@ -41,6 +41,8 @@ class Template_Resize
        @Crop_Y = ((@Y_Size.to_i + 1) * 32)
      else
        puts "Y < X"
+       @Crop_Y = ((@X_Size.to_i - 1) * 32)
+
      end
     
     puts "----Crop---"
