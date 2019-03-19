@@ -42,7 +42,7 @@ class Template_Resize
      else
        puts "Y < X"
        #@Crop_Y = @Y_Size.to_i <= 3 ? ((@X_Size.to_i) * 32) + 16 : ((@X_Size.to_i - 1) * 32) + 32
-       @Crop_Y = (@X_Size.to_i % 2).to_i == 0 ? (@X_Size.to_i - 1) * (@Y_Size.to_i * 16) : ((@X_Size.to_i + 1) * 32) - 16
+       @Crop_Y = (@X_Size.to_i % 2).to_i == 0 ? (@X_Size.to_i - 1) * (@Y_Size.to_i * 16) : ((@X_Size.to_i + 1) * 32) - ((@Y_Size.to_i - 1)* 16)
      end
     
     puts "----Crop---"
