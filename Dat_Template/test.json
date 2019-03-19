@@ -1,12 +1,35 @@
 {
     "test.pak":{
         "Type":"factory",
-        "param":{
+        "Param":{
 
         },
-        "image":{
-            "X":3,
-            "Y":3
+		"Input":{
+			{
+				"Good":"Delivery_Box(Trunk)",
+				"Capacity":"300",
+				"Factor":"100"
+			}
+		},
+		"Output":{
+			{
+				"Good":"Delivery_Box(District)",
+				"Capacity":"300",
+				"Factor":"100"
+			}
+		},
+        "Image":{
+			"Dims":4,
+			"Area":{
+				"X":3,
+				"Y":3
+			}
+			"Source":{
+				"Test1_src.png"
+				"Test2_src.png"
+				"Test3_src.png"
+				"Test4_src.png"
+			}
         }
     }
 }
