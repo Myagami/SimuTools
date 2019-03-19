@@ -1,10 +1,12 @@
 {
     "test.pak":{
+        "Type":"factory",
+        "param":{
 
+        },
         "image":{
             "X":3,
             "Y":3
         }
     }
 }
-
