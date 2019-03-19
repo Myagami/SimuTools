@@ -32,18 +32,17 @@ class Template_Resize
     
     #math crop area
     @Crop_X = (@X_Size.to_i - 1) * 32
-    if @Y_Size.to_i == 1 then
-      @Crop_Y = (@X_Size.to_i * 32) + 16
-    elsif @Y_Size.to_i > @X_Size.to_i then
-      puts "Y > X"
-      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? @Y_Size.to_i * 32 : ((@Y_Size.to_i - 1) * 32) + 16
-    elsif @Y_Size.to_i == @X_Size.to_i then
-      @Crop_Y = ((@Y_Size.to_i + 1) * 32)
-    else
-      puts "Y < X"
-      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i + 1) * 32) + 32 : @Y_Size.to_i  * 32
-      #@Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i + 1) * 32) + 32 : (@Y_Size.to_i * 32) + 16
-    end
+     if @Y_Size.to_i == 1 then
+       @Crop_Y = (@X_Size.to_i * 32) + 16
+     elsif @Y_Size.to_i > @X_Size.to_i then
+       puts "Y > X"
+       @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? @Y_Size.to_i * 32 : ((@Y_Size.to_i - 1) * 32) + 16
+     elsif @Y_Size.to_i == @X_Size.to_i then
+       @Crop_Y = ((@Y_Size.to_i + 1) * 32)
+     else
+       puts "Y < X"
+     end
+    
     puts "----Crop---"
     puts "X_Pos:#{@Crop_X.to_i}"
     puts "Y_Pos:#{@Crop_Y.to_i}"
