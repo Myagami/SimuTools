@@ -5,15 +5,13 @@
 
         },
 		"Input":{
-			{
-				"Good":"Delivery_Box(Trunk)",
+			"Delivery_Box(Trunk)":{
 				"Capacity":"300",
 				"Factor":"100"
 			}
 		},
 		"Output":{
-			{
-				"Good":"Delivery_Box(District)",
+			"Delivery_Box(District)":{
 				"Capacity":"300",
 				"Factor":"100"
 			}
