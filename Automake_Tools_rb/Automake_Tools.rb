@@ -60,15 +60,15 @@ class AutoMake_Tools
     end
 
     def Make_Run(file)
-        #file type check
+      #file type check
         if file !~ /_src.png/ and file =~ /.png/ then # png match
-            png = file
-            dat = png.sub(/png/,'dat')
-            if !(File.exist?(dat)) then #pair dat not found return 
-              return  
-            end
-            #json check
-            jf = file.to_s.split("/")
+          png = file
+          dat = png.sub(/png/,'dat')
+          if !(File.exist?(dat)) then #pair dat not found return 
+            return  
+          end
+          #json check
+          jf = file.to_s.split("/")
             jf.shift
             puts "---------"
             puts jf
@@ -81,40 +81,48 @@ class AutoMake_Tools
               puts "X:" + @@w_Worker[jf[0]][jf[1]]['X'].to_s + " Y:" + @@w_Worker[jf[0]][jf[1]]["Y"].to_s
                  c_Cuts = Cui_Cuts.new(file.to_s)
                  c_Cuts.XY_Pos(@@w_Worker[jf[0]][jf[1]]["X"].to_i,@@w_Worker[jf[0]][jf[1]]["Y"].to_i)
-                 c_Cuts.Image_Props
+                 c_Cuts.Image_Prpos
                  c_Cuts.Image_Cuts
                  c_Cuts.Image_Write
             else
               puts "Target Not found"
             end
         elsif file !~ /_src.png/ and file =~ /.dat/ then # dat match
-            dat = file
-            if !(File.exist?(dat.sub(/dat/,'png'))) then #pair png not found return 
-                return  
+          dat = file
+          if !(File.exist?(dat.sub(/\.dat/,'_src.png'))) then #exist src file
+            puts "Files"
+          else
+            if !(File.exist?(dat.sub(/dat/,'png'))) then #exist base png file
+              puts dat.sub(/dat/,'png')
+              puts "Pair file not found for single"
+              return  
             end
-            puts "dat:#{file}"
-            puts "png:ok"
+          end
+          puts "dat:#{file}"
+          puts "png:ok"
         elsif file =~ /Worker.json/ then
-            self.Worker_Loading
+          self.Worker_Loading
         else
-            return
+          return
         end
+
         #mode switch
         if @@w_Mode == "Router" then
           #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
           cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
-        elsif @@w_Mode == "StandAlone"
-            e_Dir = File::dirname(dat)+Pak
-            puts "Export:"+e_Dir
-            #cmd = "#{MakeObj} pak #{e_Dir} #{dat}"
-            cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
+        elsif @@w_Mode == "Stands"
+          puts file
+          e_Dir = File::dirname(dat)+Pak
+          puts "Export:"+e_Dir
+          #cmd = "#{MakeObj} pak #{e_Dir} #{dat}"
+          cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
         end
         puts system(cmd)
         #puts cmd
     end
 
     def Mode_Selects(opts)
-        t_RunMode = {r:"Router",s:"StandAlone",m:"makefile"}
+        t_RunMode = {r:"Router",s:"Stands",m:"makefile"}
         @@w_Mode = t_RunMode[opts.to_sym]
         
     end
