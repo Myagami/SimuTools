@@ -60,26 +60,34 @@ class AutoMake_Tools
     end
 
     def Make_Run(file)
-      png = file.sub(/.dat/,'') 
-
+      ft = File.extname(file).to_s
+      fn = File.basename(file,".*").to_s
+      
       #file type check
-      if file =~ /goods/ and file =~ /dat/ then # goods dat
+      if file =~ /goods/ and ft == ".dat" then # goods dat
         puts "goods"
 
-      elsif file =~ /.dat/ then # dat file
+      elsif ft == ".dat" then # dat file
         puts "dat"
         puts file.to_s
 
         #png check
-        if File.exist?(png + "_src.png") then
+
+        if File.exist?(fn + "_src.png".to_s) then
+          puts "exist src file"
+        elsif File.exist?(fn + "_S.png".to_s) then
           puts "exist src file"
         else
+          puts fn + "_S.png"
           puts "none"
         end
+
 
       elsif file =~ /.png/ then # png file
         puts "png"
         puts file.to_s
+      else
+        puts "thinking"
       end 
       
       # #file type check
