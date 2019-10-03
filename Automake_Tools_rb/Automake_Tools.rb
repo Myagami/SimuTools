@@ -72,7 +72,6 @@ class AutoMake_Tools
         puts file.to_s
         fn = file.gsub!(/\.dat/,'')
         #png check
-        
         if File.exist?(fn + "_S_src.png".to_s) then # cut and cur
           puts "exist cur src file"
         elsif File.exist?(fn + "_S.png".to_s) then # cur only
@@ -87,6 +86,15 @@ class AutoMake_Tools
       elsif ft == ".png" then # png file
         puts "png"
         puts file.to_s
+        if file.to_s =~ /.*_(S|N|E|W)/ then # cur
+          puts "cur"
+          puts file.gsub!(/(?<path>.*)_(S|N|E|W).png/,'\k<path>.dat')
+        elsif file.to_s =~ /.*_src/ then # src
+          puts "src"
+        else # single
+          puts "single"
+        end 
+
       end 
       
       # #file type check
