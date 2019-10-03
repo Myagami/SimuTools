@@ -4,6 +4,9 @@ require 'optparse'
 require 'rb-inotify'
 require 'json'
 require_relative 'CUI_Cuts.rb'
+
+#my error class
+
 class AutoMake_Tools
     Pak = '/pak/'
     MakeObj = 'makeobj_60-2_x64'
@@ -61,33 +64,29 @@ class AutoMake_Tools
 
     def Make_Run(file)
       ft = File.extname(file).to_s
-      fn = File.basename(file,".*").to_s
-      
-      #file type check
       if file =~ /goods/ and ft == ".dat" then # goods dat
         puts "goods"
 
       elsif ft == ".dat" then # dat file
         puts "dat"
         puts file.to_s
-
+        fn = file.gsub!(/\.dat/,'')
         #png check
-
-        if File.exist?(fn + "_src.png".to_s) then
-          puts "exist src file"
-        elsif File.exist?(fn + "_S.png".to_s) then
-          puts "exist src file"
-        else
-          puts fn + "_S.png"
-          puts "none"
+        
+        if File.exist?(fn + "_S_src.png".to_s) then # cut and cur
+          puts "exist cur src file"
+        elsif File.exist?(fn + "_S.png".to_s) then # cur only
+          puts "exist cur file"
+        elsif File.exist?(fn + "_src.png".to_s) then # cut only
+          puts "exits src file"
+        elsif File.exist?(fn + ".png".to_s) then # cut only
+          puts "exists single file"
         end
 
 
-      elsif file =~ /.png/ then # png file
+      elsif ft == ".png" then # png file
         puts "png"
         puts file.to_s
-      else
-        puts "thinking"
       end 
       
       # #file type check
