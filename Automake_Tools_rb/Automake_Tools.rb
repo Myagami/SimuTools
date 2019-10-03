@@ -177,7 +177,7 @@ AMT.Tool_Propertys
 #AMT.Path_Monitor
 
 notif = INotify::Notifier.new 
-notif.watch(AMT.Get_Working_Dir,:close_write,:recursive){
+notif.watch(AMT.Get_Working_Dir,:close_write,:recursive,:attrib){
     |fev|
     #puts fev
     file = fev.absolute_name
