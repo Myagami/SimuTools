@@ -17,8 +17,11 @@ class AutoMake_Tools
     @@c_List = Array.new()
     @@w_Worker
     @@c_Cuts
+    @@on_sys = 'null'
     def initialize
-      
+      #default run system
+      @@on_sys = 'Linux'
+
       option = {}
       OptionParser.new do |opt|
         opt.on('-r value','role') {|path|
@@ -29,24 +32,33 @@ class AutoMake_Tools
           puts path
           puts "role"
         }
+
         opt.on('-s value','standalone'){|path|
           @@w_Dir = path
           @@e_Dir = path
-          @@w_Mode = 'Standalone'  
+          @@w_Mode = 'Stand'
+          
           puts path
           puts "standalone"
         }
+
         opt.on('-m value','makefile') {|v|
           @@w_Mode = 'MakeFile'  
           puts "makefile"
         }
-        opt.on('--WSL','Work in WSL'){|v| 
+        
+        opt.on('--WSL','Workbase in WSL'){|v| 
+          @@on_sys = 'WSL'         
           puts "WSL"
         }
         opt.parse!(ARGV)
       end
       self.Worker_Loading
       
+    end
+
+    def run_sys
+      return @@on_sys
     end
 
     def Worker_Loading
@@ -70,7 +82,6 @@ class AutoMake_Tools
       ft = File.extname(file).to_s
       if file =~ /goods/ and ft == ".dat" then # goods dat
         puts "goods"
-
       elsif ft == ".dat" then # dat file
         puts "dat"
         puts file.to_s
@@ -85,9 +96,13 @@ class AutoMake_Tools
         elsif File.exist?(fn + ".png".to_s) then # cut only
           puts "exists single file"
         end
-
-
       elsif ft == ".png" then # png file
+        #split dir path for json loading
+        jf = file.to_s.split("/")
+        puts "Working:"+jf[1]
+        puts "SubWork:"+jf[2]
+        puts jf[3]        
+
         puts "png"
         puts file.to_s
         if file.to_s =~ /.*_(S|N|E|W)/ then # cur
@@ -95,12 +110,30 @@ class AutoMake_Tools
           puts file.gsub!(/(?<path>.*)_(S|N|E|W).png/,'\k<path>.dat')
         elsif file.to_s =~ /.*_src/ then # src
           puts "src"
+          puts file.gsub!(/(?<path>.*)_src.png/,'\k<path>.dat')
         else # single
           puts "single"
-        end 
+          puts file.gsub!(/\.dat/,'.png')
+        end
 
+        #worker job data getting 
+        if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2])  then
+          #[0] = Working Directory
+          #[1] = Sub Working Directory
+          puts "Job true"
+          puts @@w_Worker[jf[1]][jf[2]][jf[3].gsub!(/\.png/,'')]
+        else
+          puts "Job false"
+        end
+
+      elsif file =~ /Worker.json/ then #reload Worker.json
+        self.Worker_Loading
       end 
       
+      #image cut
+      #search Worker Tree
+      
+
       # #file type check
       #   if file !~ /_src.png/ and file =~ /.png/ then # png match
       #     png = file
@@ -170,6 +203,7 @@ class AutoMake_Tools
     
     def Tool_Propertys
         puts "------Tool Status------"
+        puts "System:"+@@on_sys
         puts "Working Directory:"+@@w_Dir
         puts "Export Directory:"+@@e_Dir
         puts "Mode:"+ @@w_Mode.to_s
@@ -179,16 +213,26 @@ end
 AMT = AutoMake_Tools.new()
 AMT.Tool_Propertys
 #AMT.Path_Monitor
+sys =  AMT.run_sys
 
 
+notif = INotify::Notifier.new
 
-notif = INotify::Notifier.new 
-notif.watch(AMT.Get_Working_Dir,:close_write,:recursive,:attrib){
+if sys == 'WSL' then
+  notif.watch(AMT.Get_Working_Dir,:close_write,:recursive,:attrib){
     |fev|
     #puts fev
     file = fev.absolute_name
     AMT.Make_Run(file)
     #puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
-}
-
+  }
+elsif sys == 'Linux' then
+  notif.watch(AMT.Get_Working_Dir,:close_write,:recursive){
+    |fev|
+    #puts fev
+    file = fev.absolute_name
+    AMT.Make_Run(file)
+    #puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
+  }
+end
 notif.run
