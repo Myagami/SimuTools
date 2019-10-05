@@ -36,7 +36,7 @@ class AutoMake_Tools
         opt.on('-s value','standalone'){|path|
           @@w_Dir = path
           @@e_Dir = path
-          @@w_Mode = 'Stand'
+          @@w_Mode = 'Stands'
           
           puts path
           puts "standalone"
@@ -82,10 +82,11 @@ class AutoMake_Tools
       ft = File.extname(file).to_s
       if file =~ /goods/ and ft == ".dat" then # goods dat
         puts "goods"
+        self.Command_Genelate(file)
       elsif ft == ".dat" then # dat file
         puts "dat"
         puts file.to_s
-        fn = file.gsub!(/\.dat/,'')
+        fn = file.gsub(/\.dat/,'')
         #png check
         if File.exist?(fn + "_S_src.png".to_s) then # cut and cur
           puts "exist cur src file"
@@ -96,27 +97,15 @@ class AutoMake_Tools
         elsif File.exist?(fn + ".png".to_s) then # cut only
           puts "exists single file"
         end
+        self.Command_Genelate(file)
       elsif ft == ".png" then # png file
         #split dir path for json loading
         jf = file.to_s.split("/")
-              
-
         puts "png"
         puts file.to_s
-        if file.to_s =~ /.*_(S|N|E|W)/ then # cur
-          puts "cur"
-          puts file.gsub!(/(?<path>.*)_(S|N|E|W).png/,'\k<path>.dat')
-        elsif file.to_s =~ /.*_src/ then # src
-          puts "src"
-          puts file.gsub!(/(?<path>.*)_src.png/,'\k<path>.dat')
-        else # single
-          puts "single"
-          puts file.gsub!(/\.dat/,'.png')
-        end
-
         #worker job data getting 
         
-        if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2]) and @@w_Worker[jf[1]][jf[2]].has_key?(jf[3].gsub!(/\.png/,''))  then
+        if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2]) and @@w_Worker[jf[1]][jf[2]].has_key?(jf[3].gsub!(/\.png/,'')) then # exist job
           #[0] = Working Directory
           #[1] = Sub Working Directory
           puts "Job true"
@@ -124,13 +113,29 @@ class AutoMake_Tools
           puts "SubWork:"+jf[2]
           puts "Target:"+jf[3]  
           puts @@w_Worker[jf[1]][jf[2]][jf[3]]
-        else
+        else # no exist job
+          if file.to_s =~ /.*_(S|N|E|W)/ then # cur
+            puts "cur"
+            dat =  file.gsub(/(?<path>.*)_(S|N|E|W).png/,'\k<path>.dat')
+          elsif file.to_s =~ /.*_src/ then # src
+            puts "src"
+            dat = file.gsub(/(?<path>.*)_src.png/,'\k<path>.dat')
+          else # single
+            puts "single"
+            dat = file.gsub(/\.png/,'.dat')
+          end
           puts "Job false"
+          puts "Target Dat:"+dat
         end
+        self.Command_Genelate(dat)
 
       elsif file =~ /Worker.json/ then #reload Worker.json
         self.Worker_Loading
       end 
+
+      # export command generate
+      
+      #puts cmd      
       
       #image cut
       #search Worker Tree
@@ -195,6 +200,19 @@ class AutoMake_Tools
       #   end
       #   puts system(cmd)
       #   #puts cmd
+    end
+
+    def Command_Genelate(file)
+      puts "Export command"
+      puts file
+=begin
+      if @@w_Mode == "Router" then
+        #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
+        cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
+      elsif @@w_Mode == "Stands"
+        puts file
+      end
+=end
     end
 
     def Mode_Selects(opts)
