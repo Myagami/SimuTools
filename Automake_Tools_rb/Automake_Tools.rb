@@ -46,7 +46,7 @@ class AutoMake_Tools
           @@w_Mode = 'MakeFile'  
           puts "makefile"
         }
-        
+
         opt.on('--WSL','Workbase in WSL'){|v| 
           @@on_sys = 'WSL'         
           puts "WSL"
@@ -99,9 +99,7 @@ class AutoMake_Tools
       elsif ft == ".png" then # png file
         #split dir path for json loading
         jf = file.to_s.split("/")
-        puts "Working:"+jf[1]
-        puts "SubWork:"+jf[2]
-        puts jf[3]        
+              
 
         puts "png"
         puts file.to_s
@@ -117,11 +115,15 @@ class AutoMake_Tools
         end
 
         #worker job data getting 
-        if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2])  then
+        
+        if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2]) and @@w_Worker[jf[1]][jf[2]].has_key?(jf[3].gsub!(/\.png/,''))  then
           #[0] = Working Directory
           #[1] = Sub Working Directory
           puts "Job true"
-          puts @@w_Worker[jf[1]][jf[2]][jf[3].gsub!(/\.png/,'')]
+          puts "Working:"+jf[1]
+          puts "SubWork:"+jf[2]
+          puts "Target:"+jf[3]  
+          puts @@w_Worker[jf[1]][jf[2]][jf[3]]
         else
           puts "Job false"
         end
