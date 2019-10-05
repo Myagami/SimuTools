@@ -18,31 +18,35 @@ class AutoMake_Tools
     @@w_Worker
     @@c_Cuts
     def initialize
-      self.Run_Mode
       
-    end
-
-    def Run_Mode #AutoMake Tools RumMode Setting Get
-      #opts
-        r_mode =  ARGV.getopts('r:s:m').select{|key,val| val != false && val != nil}
-        r_mode.each{|opts,path|
-            self.Set_Working_Dir(path,opts)
-            self.Mode_Selects(opts)
-            self.Worker_Loading
-        }       
-    end
-
-    def Set_Working_Dir(path,opts)
-
-        if opts == "r"
-            @@w_Dir = path
-            @@e_Dir = path + Pak
-            @@e_Dir.gsub!("//","/")
-
-        elsif opts == "s"
-            @@w_Dir = path
-            @@e_Dir = path
-        end
+      option = {}
+      OptionParser.new do |opt|
+        opt.on('-r value','role') {|path|
+          @@w_Dir = path
+          @@e_Dir = path + Pak
+          @@e_Dir.gsub!("//","/")
+          @@w_Mode = 'Routor'
+          puts path
+          puts "role"
+        }
+        opt.on('-s value','standalone'){|path|
+          @@w_Dir = path
+          @@e_Dir = path
+          @@w_Mode = 'Standalone'  
+          puts path
+          puts "standalone"
+        }
+        opt.on('-m value','makefile') {|v|
+          @@w_Mode = 'MakeFile'  
+          puts "makefile"
+        }
+        opt.on('--WSL','Work in WSL'){|v| 
+          puts "WSL"
+        }
+        opt.parse!(ARGV)
+      end
+      self.Worker_Loading
+      
     end
 
     def Worker_Loading
@@ -175,6 +179,8 @@ end
 AMT = AutoMake_Tools.new()
 AMT.Tool_Propertys
 #AMT.Path_Monitor
+
+
 
 notif = INotify::Notifier.new 
 notif.watch(AMT.Get_Working_Dir,:close_write,:recursive,:attrib){
