@@ -28,9 +28,9 @@ class AutoMake_Tools
           @@w_Dir = path
           @@e_Dir = path + Pak
           @@e_Dir.gsub!("//","/")
-          @@w_Mode = 'Routor'
+          @@w_Mode = 'Router'
           puts path
-          puts "role"
+          puts "Router"
         }
 
         opt.on('-s value','standalone'){|path|
@@ -97,7 +97,7 @@ class AutoMake_Tools
         elsif File.exist?(fn + ".png".to_s) then # cut only
           puts "exists single file"
         end
-        self.Command_Genelate(file)
+        cmd = self.Command_Genelate(file)
       elsif ft == ".png" then # png file
         #split dir path for json loading
         jf = file.to_s.split("/")
@@ -106,113 +106,58 @@ class AutoMake_Tools
         #worker job data getting 
         
         if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2]) and @@w_Worker[jf[1]][jf[2]].has_key?(jf[3].gsub!(/\.png/,'')) then # exist job
-          #[0] = Working Directory
-          #[1] = Sub Working Directory
+          # [0] = Working Directory
+          # [1] = Sub Working Directory
           puts "Job true"
           puts "Working:"+jf[1]
           puts "SubWork:"+jf[2]
           puts "Target:"+jf[3]  
           puts @@w_Worker[jf[1]][jf[2]][jf[3]]
-        else # no exist job
-          if file.to_s =~ /.*_(S|N|E|W)/ then # cur
-            puts "cur"
-            dat =  file.gsub(/(?<path>.*)_(S|N|E|W).png/,'\k<path>.dat')
-          elsif file.to_s =~ /.*_src/ then # src
-            puts "src"
-            dat = file.gsub(/(?<path>.*)_src.png/,'\k<path>.dat')
-          else # single
-            puts "single"
-            dat = file.gsub(/\.png/,'.dat')
-          end
-          puts "Job false"
-          puts "Target Dat:"+dat
+          # image cut
+
+          c_Cuts = Cui_Cuts.new(file.to_s)
+          c_Cuts.XY_Pos(@@w_Worker[jf[1]][jf[2]][jf[3]]["X"].to_i,@@w_Worker[jf[1]][jf[2]][jf[3]]["Y"].to_i)
+          c_Cuts.Image_Props
+          c_Cuts.Image_Cuts
+          c_Cuts.Image_Write          
         end
-        self.Command_Genelate(dat)
+        #path convert
+        if file.to_s =~ /.*_(S|N|E|W)/ then # cur
+          puts "cur"
+          dat =  file.gsub(/(?<path>.*)_(S|N|E|W).png/,'\k<path>.dat')
+        elsif file.to_s =~ /.*_src/ then # src
+          puts "src"
+          dat = file.gsub(/(?<path>.*)_src.png/,'\k<path>.dat')
+        else # single
+          puts "single"
+          dat = file.gsub(/\.png/,'.dat')
+        end
+
+        if File.exist?(dat) then 
+          cmd = self.Command_Genelate(dat,jf[1])
+        else
+          puts "dat not found"
+          return
+        end 
 
       elsif file =~ /Worker.json/ then #reload Worker.json
         self.Worker_Loading
       end 
+      # export system command
+      puts cmd
 
-      # export command generate
-      
-      #puts cmd      
-      
-      #image cut
-      #search Worker Tree
-      
-
-      # #file type check
-      #   if file !~ /_src.png/ and file =~ /.png/ then # png match
-      #     png = file
-      #     dat = png.sub(/png/,'dat')
-      #     if !(File.exist?(dat)) then #pair dat not found return 
-      #       return  
-      #     end
-      #     #json check
-      #     jf = file.to_s.split("/")
-      #       jf.shift  
-      #       puts "---------"
-      #       puts jf
-      #       puts "---------"
-      #       puts "png:#{file}"
-      #       puts "dat:Ok"
-      #       if @@w_Worker.has_key?(jf[0]) and @@w_Worker[jf[0]].has_key?(jf[1])  then
-      #         puts "Dir:"+jf[0]
-      #         puts "File:"+jf[1]
-      #         puts "X:" + @@w_Worker[jf[0]][jf[1]]['X'].to_s + " Y:" + @@w_Worker[jf[0]][jf[1]]["Y"].to_s
-      #            c_Cuts = Cui_Cuts.new(file.to_s)
-      #            c_Cuts.XY_Pos(@@w_Worker[jf[0]][jf[1]]["X"].to_i,@@w_Worker[jf[0]][jf[1]]["Y"].to_i)
-      #            c_Cuts.Image_Prpos
-      #            c_Cuts.Image_Cuts
-      #            c_Cuts.Image_Write
-      #       else
-      #         puts "Target Not found"
-      #       end
-      #   elsif file !~ /_src.png/ and file =~ /.dat/ then # dat match
-      #     dat = file
-      #     if !(File.exist?(dat.sub(/\.dat/,'_src.png'))) then #exist src file
-      #       puts "Files"
-      #     else
-      #       if !(File.exist?(dat.sub(/dat/,'png'))) then #exist base png file
-      #         puts dat.sub(/dat/,'png')
-      #         puts "Pair file not found for single"
-      #         return
-      #       end
-      #     end
-      #     puts "dat:#{file}"
-      #     puts "png:ok"
-      #   elsif file =~ /Worker.json/ then
-      #     self.Worker_Loading
-      #   else
-      #     return
-      #   end
-
-      #   #mode switch
-      #   if @@w_Mode == "Router" then
-      #     #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
-      #     cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
-      #   elsif @@w_Mode == "Stands"
-      #     puts file
-      #     e_Dir = File::dirname(dat)+Pak
-      #     puts "Export:"+e_Dir
-      #     #cmd = "#{MakeObj} pak #{e_Dir} #{dat}"
-      #     cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
-      #   end
-      #   puts system(cmd)
-      #   #puts cmd
     end
 
-    def Command_Genelate(file)
+    def Command_Genelate(file,path=@@e_Dir)
       puts "Export command"
-      puts file
-=begin
       if @@w_Mode == "Router" then
         #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
-        cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
+        cmd = "#{MakeObj} pak #{path} #{file}"
       elsif @@w_Mode == "Stands"
-        puts file
+        #based = File.dirname(path)
+        cmd = "#{MakeObj} pak #{path}/pak/ #{file}"
       end
-=end
+      return cmd
     end
 
     def Mode_Selects(opts)
@@ -234,7 +179,6 @@ AMT = AutoMake_Tools.new()
 AMT.Tool_Propertys
 #AMT.Path_Monitor
 sys =  AMT.run_sys
-
 
 notif = INotify::Notifier.new
 
