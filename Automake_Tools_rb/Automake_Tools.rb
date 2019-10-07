@@ -113,9 +113,10 @@ class AutoMake_Tools
           puts "SubWork:"+jf[2]
           puts "Target:"+jf[3]  
           puts @@w_Worker[jf[1]][jf[2]][jf[3]]
+          wj = @@w_Worker[jf[1]][jf[2]][jf[3]]
           # image cut
-
-          c_Cuts = Cui_Cuts.new(file.to_s)
+          
+          c_Cuts = CUI_Cuts.new(file.to_s,wj["X"],wj["Y"])
           c_Cuts.XY_Pos(@@w_Worker[jf[1]][jf[2]][jf[3]]["X"].to_i,@@w_Worker[jf[1]][jf[2]][jf[3]]["Y"].to_i)
           c_Cuts.Image_Props
           c_Cuts.Image_Cuts
