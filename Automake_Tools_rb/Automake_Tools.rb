@@ -3,7 +3,7 @@
 require 'optparse'
 require 'rb-inotify'
 require 'json'
-require_relative 'CUI_Cuts.rb'
+#require_relative 'CUI_Cuts'
 
 #my error class
 
@@ -115,12 +115,9 @@ class AutoMake_Tools
           puts @@w_Worker[jf[1]][jf[2]][jf[3]]
           wj = @@w_Worker[jf[1]][jf[2]][jf[3]]
           # image cut
-          
-          c_Cuts = CUI_Cuts.new(file.to_s,wj["X"],wj["Y"])
-          c_Cuts.XY_Pos(@@w_Worker[jf[1]][jf[2]][jf[3]]["X"].to_i,@@w_Worker[jf[1]][jf[2]][jf[3]]["Y"].to_i)
-          c_Cuts.Image_Props
-          c_Cuts.Image_Cuts
-          c_Cuts.Image_Write          
+          system("CUI_Cuts.rb #{file.to_s} #{wj["X"]} #{wj["Y"]}")
+
+
         end
         #path convert
         if file.to_s =~ /.*_(S|N|E|W)/ then # cur
