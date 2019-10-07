@@ -32,7 +32,7 @@ class Cui_Cuts
     print "Export: "
     puts @Out_Image
 
-    #propsっっf
+    #props
     print "Width:"
     puts @image.columns
     print "Height:"
@@ -48,12 +48,17 @@ class Cui_Cuts
       puts "Y > X"
       @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i / 2) * 32) + 16 : ((@Y_Size.to_i - 1) * 32) - 32
     elsif @Y_Size.to_i == @X_Size.to_i then
-      @Crop_Y = (@Y_Size.to_i - 1) * 32
+      @Crop_Y = (@Y_Size.to_i - 1) * 32 
     else
       puts "Y < X"
-      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : @Y_Size.to_i  * 32
+      if @Y_Size == 1 then
+        @Crop_Y = 16
+      else
+        @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : @Y_Size.to_i  * 32
+      end
     end
     
+    #@Crop_Y = 16
     puts "CropY:"+@Crop_Y.to_s
   end
 
