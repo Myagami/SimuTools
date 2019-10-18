@@ -3,6 +3,7 @@
 #
 
 require 'optparse'
+require 'json'
 
 class Dat_Definition
 
