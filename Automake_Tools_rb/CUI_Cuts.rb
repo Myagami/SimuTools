@@ -1,11 +1,6 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-#Argvars
-
-
-#private vars
-
 #require and new instance
 require 'rmagick'
 
