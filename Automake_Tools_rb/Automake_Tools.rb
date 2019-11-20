@@ -191,9 +191,10 @@ if sys == 'WSL' then
 elsif sys == 'Linux' then
   notif.watch(AMT.Get_Working_Dir,:close_write,:recursive){
     |fev|
-    #puts fev
+    #puts fev.flags
     file = fev.absolute_name
     AMT.Make_Run(file)
+    puts "----------------"
     #puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   }
 end
