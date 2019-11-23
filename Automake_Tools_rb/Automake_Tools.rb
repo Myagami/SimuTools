@@ -103,24 +103,31 @@ class AutoMake_Tools
         jf = file.to_s.split("/")
         puts "png"
         puts file.to_s
-        #worker job data getting 
-        
-        if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2]) and @@w_Worker[jf[1]][jf[2]].has_key?(jf[3].gsub!(/\.png/,'')) then # exist job
-          # [0] = Working Directory
-          # [1] = Sub Working Directory
-          puts "Job true"
-          puts "Working:"+jf[1]
-          puts "SubWork:"+jf[2]
-          puts "Target:"+jf[3]  
-          puts @@w_Worker[jf[1]][jf[2]][jf[3]]
-          wj = @@w_Worker[jf[1]][jf[2]][jf[3]]
-          # image cut
-          system("CUI_Cuts.rb #{file.to_s} #{wj["X"]} #{wj["Y"]}")
-
-
+        #worker job data getting]
+ 
+        if defined? @@w_Worker then
+          if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2]) and @@w_Worker[jf[1]][jf[2]].has_key?(jf[3].gsub!(/\.png/,'')) then # exist job
+            # [0] = Working Directory
+            # [1] = Sub Working Directory
+            puts "Job true"
+            puts "Working:"+jf[1]
+            puts "SubWork:"+jf[2]
+            puts "Target:"+jf[3]  
+            puts @@w_Worker[jf[1]][jf[2]][jf[3]]
+            wj = @@w_Worker[jf[1]][jf[2]][jf[3]]
+            # image cut
+            system("CUI_Cuts.rb #{file.to_s} #{wj["X"]} #{wj["Y"]}")
+          else
+            print "span"
+            puts @@w_Worker
+          end
+        else
+          puts "Single User" 
         end
+
+
         #path convert
-        if file.to_s =~ /.*_(S|N|E|W)/ then # cur
+        if file.to_s =~ /.*_(S|N|E|W)\./ then # cur
           puts "cur"
           dat =  file.gsub(/(?<path>.*)_(S|N|E|W).png/,'\k<path>.dat')
         elsif file.to_s =~ /.*_src/ then # src
@@ -132,7 +139,7 @@ class AutoMake_Tools
         end
 
         if File.exist?(dat) then 
-          cmd = self.Command_Genelate(dat,jf[1])
+          cmd = self.Command_Genelate(dat)
         else
           puts "dat not found"
           return
@@ -142,7 +149,10 @@ class AutoMake_Tools
         self.Worker_Loading
       end 
       # export system command
-      puts cmd
+      if cmd.nil? == false then
+        puts cmd
+        puts "-----------------"
+      end
 
     end
 
@@ -150,6 +160,7 @@ class AutoMake_Tools
       puts "Export command"
       if @@w_Mode == "Router" then
         #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
+        puts "Router"
         cmd = "#{MakeObj} pak #{path} #{file}"
       elsif @@w_Mode == "Stands"
         #based = File.dirname(path)
@@ -170,6 +181,7 @@ class AutoMake_Tools
         puts "Working Directory:"+@@w_Dir
         puts "Export Directory:"+@@e_Dir
         puts "Mode:"+ @@w_Mode.to_s
+        puts "----------------------"
     end 
 end 
 
@@ -194,7 +206,6 @@ elsif sys == 'Linux' then
     #puts fev.flags
     file = fev.absolute_name
     AMT.Make_Run(file)
-    puts "----------------"
     #puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   }
 end
