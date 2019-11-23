@@ -18,6 +18,7 @@ class AutoMake_Tools
     @@w_Worker
     @@c_Cuts
     @@on_sys = 'null'
+    @@action_log
     def initialize
       #default run system
       @@on_sys = 'Linux'
@@ -182,6 +183,14 @@ class AutoMake_Tools
         puts "Export Directory:"+@@e_Dir
         puts "Mode:"+ @@w_Mode.to_s
         puts "----------------------"
+    end 
+
+    def Logging_Importer(type,message)
+
+    end
+
+    def Logging_Exporter
+
     end 
 end 
 
