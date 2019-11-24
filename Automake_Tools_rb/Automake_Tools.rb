@@ -81,29 +81,37 @@ class AutoMake_Tools
 
     def Make_Run(file)
       ft = File.extname(file).to_s
+      jf = file.to_s.split("/")
+
+      #File Type Checking      
       if file =~ /goods/ and ft == ".dat" then # goods dat
         #puts "goods"
         self.Logging_Importer("FileType","")
         self.Command_Genelate(file)
       elsif ft == ".dat" then # dat file
+        #locking file exist check
+        if Locking_File_Check(jf[0],jf[1]) == 0
+          return 0
+        end
         self.Logging_Importer("FileType","dat")
         self.Logging_Importer("FilePath",file.to_s)
         #puts "dat"
         fn = file.gsub(/\.dat/,'')
         #png check
         if File.exist?(fn + "_S_src.png".to_s) then # cut and cur
+          self.Logging_Importer("FileExist","Cur src file")
           puts "exist cur src file"
         elsif File.exist?(fn + "_S.png".to_s) then # cur only
-          puts "exist cur file"
+          self.Logging_Importer("FileExist","Cur file")
         elsif File.exist?(fn + "_src.png".to_s) then # cut only
-          puts "exits src file"
+          self.Logging_Importer("FileExist","src file")
         elsif File.exist?(fn + ".png".to_s) then # cut only
-          puts "exists single file"
+          self.Logging_Importer("FileExist","single file")
         end
         cmd = self.Command_Genelate(file)
       elsif ft == ".png" then # png file
         #split dir path for json loading
-        jf = file.to_s.split("/")
+        
         puts "png"
         self.Logging_Importer("FileType","dat")
         self.Logging_Importer("FilePath",file.to_s)
@@ -158,7 +166,7 @@ class AutoMake_Tools
       end 
       # export system command
       if cmd.nil? == false then
-        puts cmd
+        system("#{cmd} 2> /dev/null 1> /dev/null")
         self.Logging_Exporter
         puts "-----------------"
       end
@@ -195,6 +203,12 @@ class AutoMake_Tools
         puts "Mode:"+ @@w_Mode.to_s
         puts "----------------------"
     end 
+
+    def Locking_File_Check(root,work)
+      if File.exist?("#{root}/#{work}/locking") then
+        return 0
+      end
+    end
 
     def Logging_Importer(type,message,mother="Root")
       if mother == "Root" then
