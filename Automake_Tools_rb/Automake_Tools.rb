@@ -18,7 +18,7 @@ class AutoMake_Tools
     @@w_Worker
     @@c_Cuts
     @@on_sys = 'null'
-    @@action_log
+    @@action_log = {}
     def initialize
       #default run system
       @@on_sys = 'Linux'
@@ -82,11 +82,13 @@ class AutoMake_Tools
     def Make_Run(file)
       ft = File.extname(file).to_s
       if file =~ /goods/ and ft == ".dat" then # goods dat
-        puts "goods"
+        #puts "goods"
+        self.Logging_Importer("FileType","")
         self.Command_Genelate(file)
       elsif ft == ".dat" then # dat file
-        puts "dat"
-        puts file.to_s
+        self.Logging_Importer("FileType","dat")
+        self.Logging_Importer("FilePath",file.to_s)
+        #puts "dat"
         fn = file.gsub(/\.dat/,'')
         #png check
         if File.exist?(fn + "_S_src.png".to_s) then # cut and cur
@@ -103,7 +105,8 @@ class AutoMake_Tools
         #split dir path for json loading
         jf = file.to_s.split("/")
         puts "png"
-        puts file.to_s
+        self.Logging_Importer("FileType","dat")
+        self.Logging_Importer("FilePath",file.to_s)
         #worker job data getting]
  
         if defined? @@w_Worker then
@@ -111,6 +114,9 @@ class AutoMake_Tools
             # [0] = Working Directory
             # [1] = Sub Working Directory
             puts "Job true"
+            self.Logging_Importer("Working",file.to_sjf[1],"Worker")
+            self.Logging_Importer("Subwork",file.to_sjf[2],"Worker")
+            self.Logging_Importer("Target",file.to_sjf[3],"Worker")
             puts "Working:"+jf[1]
             puts "SubWork:"+jf[2]
             puts "Target:"+jf[3]  
@@ -123,6 +129,7 @@ class AutoMake_Tools
             puts @@w_Worker
           end
         else
+          self.Logging_Importer("Working","Single")
           puts "Single User" 
         end
 
@@ -152,6 +159,7 @@ class AutoMake_Tools
       # export system command
       if cmd.nil? == false then
         puts cmd
+        self.Logging_Exporter
         puts "-----------------"
       end
 
@@ -161,8 +169,11 @@ class AutoMake_Tools
       puts "Export command"
       if @@w_Mode == "Router" then
         #cmd = "#{MakeObj} pak #{@@e_Dir} #{dat}"
-        puts "Router"
         cmd = "#{MakeObj} pak #{path} #{file}"
+        self.Logging_Importer("Mode","Router","Export")
+        self.Logging_Importer("Command","#{cmd.to_s}","Export")
+        #puts "Router"
+        #cmd = "#{MakeObj} pak #{path} #{file}"
       elsif @@w_Mode == "Stands"
         #based = File.dirname(path)
         cmd = "#{MakeObj} pak #{path}/pak/ #{file}"
@@ -185,12 +196,22 @@ class AutoMake_Tools
         puts "----------------------"
     end 
 
-    def Logging_Importer(type,message)
-
+    def Logging_Importer(type,message,mother="Root")
+      if mother == "Root" then
+        @@action_log[:"#{type.to_sym}"] = message
+      elsif @@action_log.has_key?(:"#{mother.to_sym}") then
+        @@action_log[:"#{mother.to_sym}"].store("#{type.to_s}",message)
+      else
+        _has = {}
+        #puts mother
+        _has[:"#{type.to_sym}"] = message
+        @@action_log[:"#{mother.to_sym}"] = _has
+      end
     end
 
     def Logging_Exporter
-
+      puts JSON.pretty_generate(@@action_log)
+      @@action_log = {}
     end 
 end 
 
