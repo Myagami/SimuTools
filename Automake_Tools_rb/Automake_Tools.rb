@@ -79,22 +79,36 @@ class AutoMake_Tools
         return @@w_Dir
     end
 
-    def Make_Run(file)
+    def Make_Run(file,flugs)
       ft = File.extname(file).to_s
       jf = file.to_s.split("/")
+      puts "Flag:" + flugs[0].to_s
+
+      #file delete
+      if flugs[0].to_s == "delete"
+        self.Logging_Importer("status","delete")
+        self.Logging_Importer("FilePath",file.to_s)
+        self.Logging_Exporter
+        return 0
+      end
 
       #File Type Checking      
       if file =~ /goods/ and ft == ".dat" then # goods dat
         #puts "goods"
-        self.Logging_Importer("FileType","")
+        self.Logging_Importer("status","update")
+        self.Logging_Importer("FileType","goods")
+        self.Logging_Importer("FilePath",file.to_s)
         self.Command_Genelate(file)
       elsif ft == ".dat" then # dat file
         #locking file exist check
-        if Locking_File_Check(jf[0],jf[1]) == 0
-          return 0
-        end
+        self.Logging_Importer("status","update")
         self.Logging_Importer("FileType","dat")
         self.Logging_Importer("FilePath",file.to_s)
+        if Locking_File_Check(jf[0],jf[1]) == 0
+          self.Logging_Importer("Locking","true")
+          self.Logging_Exporter
+          return 0
+        end
         #puts "dat"
         fn = file.gsub(/\.dat/,'')
         #png check
@@ -111,12 +125,15 @@ class AutoMake_Tools
         cmd = self.Command_Genelate(file)
       elsif ft == ".png" then # png file
         #split dir path for json loading
-        
-        puts "png"
+        self.Logging_Importer("status","update")
         self.Logging_Importer("FileType","dat")
         self.Logging_Importer("FilePath",file.to_s)
+        if Locking_File_Check(jf[0],jf[1]) == 0
+          self.Logging_Importer("Locking","true")
+          self.Logging_Exporter
+          return 0
+        end
         #worker job data getting]
- 
         if defined? @@w_Worker then
           if @@w_Worker.has_key?(jf[1]) and @@w_Worker[jf[1]].has_key?(jf[2]) and @@w_Worker[jf[1]][jf[2]].has_key?(jf[3].gsub!(/\.png/,'')) then # exist job
             # [0] = Working Directory
@@ -160,13 +177,17 @@ class AutoMake_Tools
           puts "dat not found"
           return
         end 
+      elsif file =~ /locking/ then
+        self.Logging_Importer("LockDirectory",jf[1])
+        self.Logging_Importer("status","Locking")
+        self.Logging_Exporter() 
 
       elsif file =~ /Worker.json/ then #reload Worker.json
         self.Worker_Loading
       end 
       # export system command
       if cmd.nil? == false then
-        system("#{cmd} 2> /dev/null 1> /dev/null")
+        system("#{cmd}")
         self.Logging_Exporter
         puts "-----------------"
       end
@@ -237,19 +258,19 @@ sys =  AMT.run_sys
 notif = INotify::Notifier.new
 
 if sys == 'WSL' then
-  notif.watch(AMT.Get_Working_Dir,:close_write,:recursive,:attrib){
+  notif.watch(AMT.Get_Working_Dir,:close_write,:recursive,:attrib,:remove){
     |fev|
     #puts fev
     file = fev.absolute_name
-    AMT.Make_Run(file)
+    AMT.Make_Run(file,fev.flags)
     #puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   }
 elsif sys == 'Linux' then
-  notif.watch(AMT.Get_Working_Dir,:close_write,:recursive){
+  notif.watch(AMT.Get_Working_Dir,:close_write,:recursive,:delete){
     |fev|
     #puts fev.flags
     file = fev.absolute_name
-    AMT.Make_Run(file)
+    AMT.Make_Run(file,fev.flags)
     #puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   }
 end
