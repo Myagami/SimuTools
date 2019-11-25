@@ -85,7 +85,13 @@ class AutoMake_Tools
       puts "Flag:" + flugs[0].to_s
 
       #file delete
-      if flugs[0].to_s == "delete"
+      if flugs[0].to_s == "delete" && file =~ /locking/ then 
+        self.Logging_Importer("LockDirectory",jf[1])
+        self.Logging_Importer("status","Unlock")
+        self.Logging_Exporter() 
+        return 0
+      elsif flugs[0].to_s == "delete"
+          
         self.Logging_Importer("status","delete")
         self.Logging_Importer("FilePath",file.to_s)
         self.Logging_Exporter
@@ -181,7 +187,6 @@ class AutoMake_Tools
         self.Logging_Importer("LockDirectory",jf[1])
         self.Logging_Importer("status","Locking")
         self.Logging_Exporter() 
-
       elsif file =~ /Worker.json/ then #reload Worker.json
         self.Worker_Loading
       end 
