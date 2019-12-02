@@ -82,7 +82,7 @@ class AutoMake_Tools
     def Make_Run(file,flugs)
       ft = File.extname(file).to_s
       jf = file.to_s.split("/")
-      puts "Flag:" + flugs[0].to_s
+      #puts "Flag:" + flugs[0].to_s
 
       #file delete
       if flugs[0].to_s == "delete" && file =~ /locking/ then 
