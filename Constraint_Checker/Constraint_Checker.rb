@@ -39,10 +39,25 @@ class Constraint_Checker
           end
         end
       end
-    pp @@const_list
+    #pp @@const_list
+  end
+
+  def ConstCheck # 連結チェック
+    @@const_list.each do | c_name,consts |
+      puts "*"+c_name
+      pp self._ConstExist(c_name,"Prev")
+      pp self._ConstExist(c_name,"Next")
+      #pp consts["Prev"]
+      #pp consts["Next"]
+    end
+    
+  end
+
+  def _ConstExist(c_name,target)
+    return @@const_list[c_name][target]
   end
 end
 
 #system start
 CCT = Constraint_Checker.new()
-#CCT.FileChecker()
+CCT.ConstCheck
