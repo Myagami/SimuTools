@@ -45,10 +45,12 @@ class Constraint_Checker
   def ConstCheck # 連結チェック
     @@const_list.each do | c_name,consts |
       puts "*"+c_name
-      pp self._ConstExist(c_name,"Prev")
-      pp self._ConstExist(c_name,"Next")
-      #pp consts["Prev"]
-      #pp consts["Next"]
+      con_Prev =  self._ConstExist(c_name,"Prev")
+      puts "Prev:"
+      pp con_Prev
+      con_Next =  self._ConstExist(c_name,"Next")
+      puts "Next:"
+      pp con_Next
     end
     
   end

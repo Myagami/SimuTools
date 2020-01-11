@@ -25,6 +25,14 @@ class AutoMake_Tools
 
       option = {}
       OptionParser.new do |opt|
+        opt.on('-d','dir'){
+          #@@w_Dir = path
+          #Dir.mkdir('pak',0775)
+          puts Dir.getwd
+          puts "WorkSpace Create"
+          exit
+        }
+
         opt.on('-r value','role') {|path|
           @@w_Dir = path
           @@e_Dir = path + Pak
