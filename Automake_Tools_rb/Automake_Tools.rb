@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-
+require "bundler/setup"
 require 'optparse'
 require 'rb-inotify'
 require 'json'

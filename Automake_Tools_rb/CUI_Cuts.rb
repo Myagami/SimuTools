@@ -2,6 +2,7 @@
 # coding: utf-8
 
 #require and new instance
+require "bundler/setup"
 require 'rmagick'
 
 #crop
