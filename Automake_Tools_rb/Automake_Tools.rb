@@ -10,7 +10,7 @@ require 'json'
 
 class AutoMake_Tools
   Pak = '/pak/'
-  MakeObj = 'makeobj_60-2_x64'
+  MakeObj = 'makeobj_60-1'
   Src_Prefix = '_src'
   @@w_Dir
   @@w_Mode
