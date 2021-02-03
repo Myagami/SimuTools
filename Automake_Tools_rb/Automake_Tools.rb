@@ -139,7 +139,7 @@ class AutoMake_Tools
     elsif ft == '.png' # png file
       # split dir path for json loading
       self.Logging_Importer('status', 'update')
-      self.Logging_Importer('FileType', 'dat')
+      self.Logging_Importer('FileType', 'png')
       self.Logging_Importer('FilePath', file.to_s)
       if Locking_File_Check(jf[0], jf[1]) == 0
         self.Logging_Importer('Locking', 'true')
@@ -226,7 +226,7 @@ class AutoMake_Tools
   end
 
   def Tool_Propertys
-    puts '------Tool Status------'
+    puts '------Tool Status-----'
     puts 'System:' + @@on_sys
     puts 'Working Directory:' + @@w_Dir
     puts 'Export Directory:' + @@e_Dir
@@ -266,13 +266,14 @@ notif = INotify::Notifier.new
 
 if sys == 'WSL'
   notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :attrib, :remove) do |fev|
+  
     # puts fev
     file = fev.absolute_name
     AMT.Make_Run(file, fev.flags)
     # puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   end
 elsif sys == 'Linux'
-  notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :delete) do |fev|
+  notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :delete, :modify) do |fev|
     # puts fev.flags
     file = fev.absolute_name
     AMT.Make_Run(file, fev.flags)
