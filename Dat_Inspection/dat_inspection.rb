@@ -1,14 +1,10 @@
 #!/usr/bin/env ruby
-
-#debug
-require 'pp'
-
 class DatInspection
-  def initialize()
+  def initialize(flug=false)
     @obj = []
     @path = []
-    @inspct_log = {'Error'=>{},'Warning'=>{},'Success'=>{}}
-    
+    @inspect_log = {'Error'=>{},'Warning'=>{},'Success'=>{}}
+    @debug = flug
   end
   
   def LoadFile(dat_f) #load dat file
@@ -24,19 +20,19 @@ class DatInspection
       dat_l.each_line do |dat_c| #object 
         if dat_c =~ /^obj/
           cnf["obj"] = dat_c.split(/=/)[1].chomp!
-        #puts cnf 
-        #puts "object"
+        #_d_puts(cnf 
+        #_d_puts("object"
         elsif dat_c =~ /^#obj/ #object commentout
           cnf["obj"] = "next"
         elsif dat_c =~ /^[-]{1,}$/ #split line
           @obj << cnf
-          #puts "CT:"+ct.to_s
+          #_d_puts("CT:"+ct.to_s
           ct += 1
           cnf = {}
         elsif dat_c =~ /=> / #icon
           line = dat_c.split(/=> /)
           cnf[line[0]] = line[1].chomp!
-        #puts dat_c
+        #_d_puts(dat_c
         else #other 
           line = dat_c.split(/=/)
           cnf[line[0]] = line[1].chomp!
@@ -47,25 +43,41 @@ class DatInspection
   end
 
   def Inspection
+    
     @obj.each{|objc| # 1 object unit each
+
       _flug = {}
+
+      # initialize objct
+      @inspect_log['Error'][objc['name']] = []
+      @inspect_log['Warning'][objc['name']] = []
+      @inspect_log['Success'][objc['name']] = []
+
       #comment out obj next
       if objc['obj'] == 'next'
+        _ad_inspect_log('Warning',objc['name'],'Comment Out')
+        _d_puts("\e[33m[Warning]\e[0mComment out")
         next
       end
-
+      
       #target
-      puts "Target: "+objc["name"].to_s
+      _d_puts("Target: "+objc["name"].to_s)
       #name
       if objc['name'].to_s =~ /^[A-z0-9_\-\(\)]{1,}$/ #clear 
-        puts "\e[34m[Success]\e[0mName rule"
+        _d_puts("\e[34m[Success]\e[0mName rule")
+        #@inspect_log['Success'][objc['name']] << 'namerule'
+        _ad_inspect_log('Success',objc['name'],'NameRule')
       else # error
+        
         if objc['name'].to_s =~ / / # space use pattern
-          puts "\e[31m[Error]\e[0mName rule using \e[4mspace\e[0m"
+          _ad_inspect_log('Error',objc['name'],'Space')
+          _d_puts("\e[31m[Error]\e[0mName rule using \e[4mspace\e[0m")
         end
         
         if objc['name'].to_s =~ /\// # slash use pattern
-          puts "\e[31m[Error]\e[0mName rule using \e[4mslash\e[0m"
+          _ad_inspect_log('Error',objc['name'],'Slash')
+          _d_puts("\e[31m[Error]\e[0mName rule using \e[4mslash\e[0m")
+          next
         end
       end
 
@@ -77,10 +89,10 @@ class DatInspection
           _type = objc['type']
         else
           _flug['type'] = true
-          puts "\e[31m[Error]\e[0mUndefined \e[4mtype\e[0m param"
+          _d_puts("\e[31m[Error]\e[0mUndefined \e[4mtype\e[0m param")
         end
 
-        #puts "type:"+_type
+        #_d_puts("type:"+_type
       end
       
       #dims
@@ -96,39 +108,37 @@ class DatInspection
       if _type == 'extension'
         _dim = ['1','2','4','8','16']
         if dim[2].to_i == 1 || dim[2].to_i == 2 || dim[2].to_i == 4
-          #if _dim.include?(dim[2].to_s)
-          #puts "pt:" + dim[2]
-          puts "\e[34m[Success]\e[0mDim Pattern Clear " + dim[2]
+          _d_puts("\e[34m[Success]\e[0mDim Pattern Clear " + dim[2])
+          _ad_inspect_log('Success',objc['name'],'Dim')
         else
-          puts "\e[31m[Error]\e[0mCan't use dim patter \e[4m"+ dim[2] +"\e[0m"
+          _d_puts("\e[31m[Error]\e[0mCan't use dim patter \e[4m"+ dim[2] +"\e[0m")
+          _ad_inspect_log('Error',objc['name'],'Dim')
+
         end
         
       elsif _flug['type']
-        puts "\e[33m[Warning]\e[0mCan't inspection in undefined \e[4mtype\e[0m param"
+        _d_puts("\e[33m[Warning]\e[0mCan't inspection in undefined \e[4mtype\e[0m param")
+        _ad_inspect_log('Warning',objc['name'],'Type')
+
       end
 
       #image check
       ## cur
-      _imagePath(objc['cursor'],'Cursor')
-      _imagePath(objc['icon'],'Icon')
+      _imagePath(objc['cursor'],'Cursor',objc['name'])
+      _imagePath(objc['icon'],'Icon',objc['name'])
 
       images = objc.select{|k,v| k.match(/Image/)}
       images.each{|key,val|
-        #puts key + ":" + val
         body = val.split(/\./)
-        if File.exist?(@path[0].to_s + '/' + body[0].to_s + '.png')
-          puts "\e[34m[Success]\e[0mBody image file exist clear => " + body[0] + ".png"
-        else
-          puts "\e[31m[Error]\e[0mBody image file don't exist => " + body[0] + ".png"
-        end
+        _imagePath(val,key,objc['name'])
       }
 
       
       
       
       #pp objc 
-      puts "----"
-      puts "inspect"
+      _d_puts("----")
+      #_d_puts("inspect"
     }
   end
 
@@ -136,19 +146,28 @@ class DatInspection
     return @inspect_log
   end
 
-  def _imagePath(line,key)
-    pos = line.split(/\./)
+  def _imagePath(line_,key_,name_)
+    pos = line_.split(/\./)
     #pp cur
     if File.exist?(@path[0].to_s + '/' + pos[0].to_s + '.png')
-      puts "\e[34m[Success]\e[0m" + key + " image file exist clear => " + pos[0] + ".png"
+      _d_puts("\e[34m[Success]\e[0m" + key_ + " image file exist clear => " + pos[0] + ".png")
+      _ad_inspect_log('Success',name_,key_)
     else
-      puts "\e[31m[Error]\e[0m" + key + " image file don't exist => " + pos[0] + ".png"
+      _d_puts("\e[31m[Error]\e[0m" + key_ + " image file don't exist => " + pos[0] + ".png")
+      #@inspect_log['Error'][name_] << key_
+      _ad_inspect_log('Error',name_,key_)
+    end
+  end
+
+  def _ad_inspect_log(cat,name,tag)
+    @inspect_log[cat.to_s][name.to_s] << tag.to_s
+  end
+  
+  def _d_puts(text) 
+    if @debug === true
+      puts text
     end
   end
 end
 
 #use vars
-di = DatInspection.new()
-di.LoadFile(ARGV[0])
-di.Inspection()
-di.ExportLog()
