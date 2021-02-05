@@ -117,8 +117,8 @@ class DatInspection
         end
         
       elsif _flug['type']
-        _d_puts("\e[33m[Warning]\e[0mCan't inspection in undefined \e[4mtype\e[0m param")
-        _ad_inspect_log('Warning',objc['name'],'Type')
+        _d_puts("\e[33m[Error]\e[0mCan't inspection in undefined \e[4mtype\e[0m param")
+        _ad_inspect_log('Error',objc['name'],'Type')
 
       end
 
@@ -146,6 +146,13 @@ class DatInspection
     return @inspect_log
   end
 
+  def ClearFile
+    @inspect_log = ''
+    @obj = ''
+  end
+  
+# class inside methods
+  
   def _imagePath(line_,key_,name_)
     pos = line_.split(/\./)
     #pp cur

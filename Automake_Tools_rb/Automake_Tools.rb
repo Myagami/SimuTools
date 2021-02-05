@@ -5,6 +5,9 @@ require 'bundler/setup'
 require 'optparse'
 require 'rb-inotify'
 require 'json'
+require 'date'
+require '/home/karen/Tools/SimuTools/Dat_Inspection/dat_inspection'
+require 'pp'
 # require_relative 'CUI_Cuts'
 # my error class
 
@@ -20,6 +23,7 @@ class AutoMake_Tools
   @@c_Cuts
   @@on_sys = 'null'
   @@action_log = {}
+  @dat_inspection 
   def initialize
     # default run system
     @@on_sys = 'Linux'
@@ -63,6 +67,7 @@ class AutoMake_Tools
       end
       opt.parse!(ARGV)
     end
+    @dat_inspection = DatInspection.new()
     self.Worker_Loading
   end
 
@@ -124,6 +129,14 @@ class AutoMake_Tools
       end
       # puts "dat"
       fn = file.gsub(/\.dat/, '')
+
+      # inspection dat
+      @dat_inspection.LoadFile(file)
+      @dat_inspection.Inspection
+      d_insp = @dat_inspection.ExportLog
+      self.Logging_Importer('Inspector', d_insp)
+      d_insp_c = self.Inspection_Error_Check(d_insp)
+
       # png check
       if File.exist?(fn + '_S_src.png'.to_s) # cut and cur
         self.Logging_Importer('FileExist', 'Cur src file')
@@ -168,7 +181,7 @@ class AutoMake_Tools
         end
       else
         self.Logging_Importer('Working', 'Single')
-        puts 'Single User'
+        puts 'Working: Single User'
       end
 
       # path convert
@@ -179,11 +192,19 @@ class AutoMake_Tools
         puts 'src'
         dat = file.gsub(/(?<path>.*)_src.png/, '\k<path>.dat')
       else # single
-        puts 'single'
+        puts 'Type:Single Bulding'
         dat = file.gsub(/\.png/, '.dat')
       end
+      
 
+      
       if File.exist?(dat)
+        #inspection
+        @dat_inspection.LoadFile(dat)
+        @dat_inspection.Inspection
+        d_insp = @dat_inspection.ExportLog
+        d_insp_c = self.Inspection_Error_Check(d_insp)
+        self.Logging_Importer('Inspector', d_insp)
         cmd = self.Command_Genelate(dat)
       else
         puts 'dat not found'
@@ -196,14 +217,31 @@ class AutoMake_Tools
     elsif file =~ /Worker.json/ # reload Worker.json
       self.Worker_Loading
     end
+    # inspection result check for error
+
     # export system command
-    if cmd.nil? == false
+    # puts "Flug: " + d_insp_c.to_s
+    if d_insp_c.to_i === 0 && cmd.nil? == false
+      puts "make"
       system(cmd.to_s)
-      self.Logging_Exporter
-      puts '-----------------'
+      #self.Logging_Exporter
+      #puts '-----------------'
     end
   end
 
+  def Inspection_Error_Check(elog)
+    flug = 0 
+    pp elog['Error']
+    elog['Error'].each do | obj,err|
+
+      if err.length.to_i >= 1 then
+        flug = 1
+      end
+    end
+    
+    return flug
+  end
+  
   def Command_Genelate(file, path = @@e_Dir)
     puts 'Export command'
     if @@w_Mode == 'Router'
@@ -256,14 +294,14 @@ class AutoMake_Tools
     @@action_log = {}
   end
 end
-
+puts "Start:" + Time.now.to_s
 AMT = AutoMake_Tools.new
 AMT.Tool_Propertys
 # AMT.Path_Monitor
 sys = AMT.run_sys
-
 notif = INotify::Notifier.new
-
+pr_file = ''
+pr_time = Time.now
 if sys == 'WSL'
   notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :attrib, :remove) do |fev|
   
@@ -273,10 +311,19 @@ if sys == 'WSL'
     # puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   end
 elsif sys == 'Linux'
-  notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :delete, :modify) do |fev|
-    # puts fev.flags
+  notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :delete) do |fev|
     file = fev.absolute_name
+    if file =~ /dat|png/
+      puts "Update:" + Time.now.to_s
+      puts fev.flags
+      puts "pr:" + pr_file
+      #actions
+      nw_time = Time.now
+    end
     AMT.Make_Run(file, fev.flags)
+    if file =~ /dat|png/
+      pr_file = file
+    end
     # puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   end
 end
