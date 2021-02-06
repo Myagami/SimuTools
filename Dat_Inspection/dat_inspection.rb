@@ -64,7 +64,7 @@ class DatInspection
       _d_puts("Target: "+objc["name"].to_s)
       #name
       if objc['name'].to_s =~ /^[A-z0-9_\-\(\)]{1,}$/ #clear 
-        _result_success("\e[34m[Success]\e[0mName rule")
+        _result_success("Name rule clear")
         #@inspect_log['Success'][objc['name']] << 'namerule'
         _ad_inspect_log('Success',objc['name'],'NameRule')
       else # error
@@ -149,11 +149,18 @@ class DatInspection
     return @inspect_log
   end
 
+# obj type inspection methods
+def _Inspection_Building
+
+end
+
+# class inside work defs
+
   def _imagePath(line_,key_,name_)
     pos = line_.split(/\./)
     #pp cur
     if File.exist?(@path[0].to_s + '/' + pos[0].to_s + '.png')
-      __result_success(key_ + " image file exist clear => " + pos[0] + ".png")
+      _result_success(key_ + " image file exist clear => " + pos[0] + ".png")
       _ad_inspect_log('Success',name_,key_)
     else
       _result_error(key_ + " image file don't exist => " + pos[0] + ".png")
@@ -173,7 +180,7 @@ class DatInspection
   end
 
   def _result_success(msg)
-    _d_puts"\e[34m[Success]\e[0m" + msg)
+    _d_puts("\e[34m[Success]\e[0m" + msg)
   end
 
   def _result_warning(msg)
