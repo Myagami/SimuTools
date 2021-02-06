@@ -2,37 +2,34 @@
 # coding: utf-8
 
 #Argvars
-In_Image = ARGV[0] 
-X_Size = ARGV[1] 
-Y_Size  = ARGV[2] 
+
 
 #private vars
 
 #require and new instance
 require 'rmagick'
-require 'inifile'
 
 #crop
-class Cui_Cuts
+class CUI_Cuts
   def initialize(in_image) #start
     @In_Image = in_image
-    @Out_Image = In_Image.sub(/.png/,'_src.png')
-    @image = Magick::ImageList.new(In_Image)
-    @image_Crops = Array.new(Y_Size.to_i).map{Array.new(X_Size.to_i)}
-
-    #@Out_Image = 
+    @Out_Image = in_image.sub(/.png/,'_src.png')
+    @image = Magick::ImageList.new(in_image)
+    puts "In:"+in_image
+    
   end
 
   def XY_Pos(x_size,y_size)
     @X_Size = x_size
-    @Y_Size = y_size    
+    @Y_Size = y_size
+    @image_Crops = Array.new(@Y_Size.to_i).map{Array.new(@X_Size.to_i)}    
   end
 
   def Image_Props
     print "Export: "
     puts @Out_Image
 
-    #propsっっf
+    #props
     print "Width:"
     puts @image.columns
     print "Height:"
@@ -48,12 +45,17 @@ class Cui_Cuts
       puts "Y > X"
       @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? ((@Y_Size.to_i / 2) * 32) + 16 : ((@Y_Size.to_i - 1) * 32) - 32
     elsif @Y_Size.to_i == @X_Size.to_i then
-      @Crop_Y = (@Y_Size.to_i - 1) * 32
+      @Crop_Y = (@Y_Size.to_i - 1) * 32 
     else
       puts "Y < X"
-      @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : @Y_Size.to_i  * 32
+      if @Y_Size == 1 then
+        @Crop_Y = 16
+      else
+        @Crop_Y = (@Y_Size.to_i % 2).to_i == 0 ? (((@Y_Size.to_i - 1) * 32) + 16) : @Y_Size.to_i  * 32
+      end
     end
     
+    @Crop_Y = 16
     puts "CropY:"+@Crop_Y.to_s
   end
 
@@ -164,6 +166,15 @@ class Cui_Cuts
     #Export
     exb.write(@Out_Image)
   end
-  
 end
 
+#export
+In_Image = ARGV[0] 
+X_Size = ARGV[1] 
+Y_Size  = ARGV[2] 
+
+cuts = CUI_Cuts.new(In_Image)
+cuts.XY_Pos(X_Size,Y_Size)
+cuts.Image_Props
+cuts.Image_Cuts
+cuts.Image_Write
