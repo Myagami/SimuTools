@@ -5,6 +5,7 @@ Automake_Tools2/paks/
 Automake_Tools2/Rooter/
 Automake_Tools2/Stand/
 Automake_Tools2/test/
+libs/*.rb
 *.png
 *.pak
 *.dat
