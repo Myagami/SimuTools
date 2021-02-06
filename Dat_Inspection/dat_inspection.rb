@@ -56,7 +56,7 @@ class DatInspection
       #comment out obj next
       if objc['obj'] == 'next'
         _ad_inspect_log('Warning',objc['name'],'Comment Out')
-        _d_puts("\e[33m[Warning]\e[0mComment out")
+        _result_warning("Comment out")
         next
       end
       
@@ -64,19 +64,20 @@ class DatInspection
       _d_puts("Target: "+objc["name"].to_s)
       #name
       if objc['name'].to_s =~ /^[A-z0-9_\-\(\)]{1,}$/ #clear 
-        _d_puts("\e[34m[Success]\e[0mName rule")
+        _result_success("Name rule clear")
         #@inspect_log['Success'][objc['name']] << 'namerule'
         _ad_inspect_log('Success',objc['name'],'NameRule')
       else # error
         
         if objc['name'].to_s =~ / / # space use pattern
           _ad_inspect_log('Error',objc['name'],'Space')
-          _d_puts("\e[31m[Error]\e[0mName rule using \e[4mspace\e[0m")
+          _result_error("Name rule using \e[4mspace\e[0m")
+
         end
         
         if objc['name'].to_s =~ /\// # slash use pattern
           _ad_inspect_log('Error',objc['name'],'Slash')
-          _d_puts("\e[31m[Error]\e[0mName rule using \e[4mslash\e[0m")
+          _result_error("Name rule using \e[4mslash\e[0m")
           next
         end
       end
@@ -89,7 +90,8 @@ class DatInspection
           _type = objc['type']
         else
           _flug['type'] = true
-          _d_puts("\e[31m[Error]\e[0mUndefined \e[4mtype\e[0m param")
+          _result_error("Undefined \e[4mtype\e[0m param")
+          #_d_puts("\e[31m[Error]\e[0m
         end
 
         #_d_puts("type:"+_type
@@ -108,17 +110,23 @@ class DatInspection
       if _type == 'extension'
         _dim = ['1','2','4','8','16']
         if dim[2].to_i == 1 || dim[2].to_i == 2 || dim[2].to_i == 4
-          _d_puts("\e[34m[Success]\e[0mDim Pattern Clear " + dim[2])
+          _result_success("Dim Pattern Clear " + dim[2])
+          #_d_puts("\e[34m[Success]\e[0m
           _ad_inspect_log('Success',objc['name'],'Dim')
         else
-          _d_puts("\e[31m[Error]\e[0mCan't use dim patter \e[4m"+ dim[2] +"\e[0m")
+          _result_error("Can't use dim patter \e[4m"+ dim[2] +"\e[0m")
           _ad_inspect_log('Error',objc['name'],'Dim')
 
         end
         
       elsif _flug['type']
+<<<<<<< HEAD
         _d_puts("\e[33m[Error]\e[0mCan't inspection in undefined \e[4mtype\e[0m param")
         _ad_inspect_log('Error',objc['name'],'Type')
+=======
+        _result_warning("Can't inspection in undefined \e[4mtype\e[0m param")
+        _ad_inspect_log('Warning',objc['name'],'Type')
+>>>>>>> c1cb084b6c289d75dc7c0dc657ae97110348c886
 
       end
 
@@ -146,6 +154,7 @@ class DatInspection
     return @inspect_log
   end
 
+<<<<<<< HEAD
   def ClearFile
     @inspect_log = ''
     @obj = ''
@@ -153,14 +162,23 @@ class DatInspection
   
 # class inside methods
   
+=======
+# obj type inspection methods
+def _Inspection_Building
+
+end
+
+# class inside work defs
+
+>>>>>>> c1cb084b6c289d75dc7c0dc657ae97110348c886
   def _imagePath(line_,key_,name_)
     pos = line_.split(/\./)
     #pp cur
     if File.exist?(@path[0].to_s + '/' + pos[0].to_s + '.png')
-      _d_puts("\e[34m[Success]\e[0m" + key_ + " image file exist clear => " + pos[0] + ".png")
+      _result_success(key_ + " image file exist clear => " + pos[0] + ".png")
       _ad_inspect_log('Success',name_,key_)
     else
-      _d_puts("\e[31m[Error]\e[0m" + key_ + " image file don't exist => " + pos[0] + ".png")
+      _result_error(key_ + " image file don't exist => " + pos[0] + ".png")
       #@inspect_log['Error'][name_] << key_
       _ad_inspect_log('Error',name_,key_)
     end
@@ -174,6 +192,18 @@ class DatInspection
     if @debug === true
       puts text
     end
+  end
+
+  def _result_success(msg)
+    _d_puts("\e[34m[Success]\e[0m" + msg)
+  end
+
+  def _result_warning(msg)
+
+  end
+
+  def _result_error(msg)
+    _d_puts("\e[31m[Error]\e[0m" + msg)
   end
 end
 
