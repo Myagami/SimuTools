@@ -6,9 +6,9 @@ Automake_Tools2/Rooter/
 Automake_Tools2/Stand/
 Automake_Tools2/test/
 libs/*.rb
-*/vendor/
-*/.vendor/
-*/bundle/
+*/vender/
+*/.vender/
+*/.bundle/
 *.png
 *.pak
 *.dat
