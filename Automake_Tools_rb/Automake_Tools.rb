@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# coding: utf-8
 # frozen_string_literal: true
 
 require 'bundler/setup'
@@ -9,6 +10,7 @@ require 'date'
 #require '/home/karen/Tools/SimuTools/Dat_Inspection/dat_inspection'
 require 'DatInspection'
 require 'pp'
+require 'systemu'
 # require_relative 'CUI_Cuts'
 # my error class
 
@@ -224,7 +226,10 @@ class AutoMake_Tools
     # puts "Flug: " + d_insp_c.to_s
     if d_insp_c.to_i === 0 && cmd.nil? == false
       puts "make"
-      system(cmd.to_s)
+      #res = system(cmd.to_s)
+      stat, sout, serr = systemu cmd
+      #res = `cmd`
+      puts "out:\n" + sout
       #self.Logging_Exporter
       #puts '-----------------'
     end
@@ -302,7 +307,7 @@ AMT.Tool_Propertys
 sys = AMT.run_sys
 notif = INotify::Notifier.new
 pr_file = ''
-pr_time = Time.now
+pr_time = 0
 if sys == 'WSL'
   notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :attrib, :remove) do |fev|
   
@@ -314,16 +319,31 @@ if sys == 'WSL'
 elsif sys == 'Linux'
   notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :delete) do |fev|
     file = fev.absolute_name
+    nw_time = Time.now
     if file =~ /dat|png/
-      puts "Update:" + Time.now.to_s
-      puts fev.flags
-      puts "pr:" + pr_file
+      if pr_time == 0 || pr_file == '' || pr_file != file # not founds / file missmatch
+        #time / file check
+        puts "Update:" + Time.now.to_s
+        puts fev.flags
+        puts "pr:" + pr_file
+        AMT.Make_Run(file, fev.flags)
+        pr_time = nw_time
+        pr_file = file
+        puts "--------"
+      elsif (nw_time - pr_time) <=15
+        next
+      else
+        puts "Update:" + Time.now.to_s
+        puts fev.flags
+        puts "pr:" + pr_file
+        AMT.Make_Run(file, fev.flags)
+        pr_time = nw_time
+        pr_file = file
+        puts "--------"
+      end
       #actions
-      nw_time = Time.now
-    end
-    AMT.Make_Run(file, fev.flags)
-    if file =~ /dat|png/
-      pr_file = file
+      sleep(15)
+
     end
     # puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   end
