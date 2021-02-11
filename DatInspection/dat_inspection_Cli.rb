@@ -2,7 +2,7 @@
 
 #debug
 require 'pp'
-require '/home/karen/Tools/SimuTools/Dat_Inspection/dat_inspection'
+require 'DatInspection'
 #use vars
 debug = ARGV[1] ? true : false
 #di = DatInspection.new(true)

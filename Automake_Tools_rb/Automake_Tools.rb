@@ -330,7 +330,7 @@ elsif sys == 'Linux'
         pr_time = nw_time
         pr_file = file
         puts "--------"
-      elsif (nw_time - pr_time) <=15
+      elsif (nw_time - pr_time) <=20
         next
       else
         puts "Update:" + Time.now.to_s
