@@ -155,8 +155,9 @@ class DatInspection
   end
 
   def ClearFile
-    @inspect_log = ''
-    @obj = ''
+    puts "Clear"
+    #@inspect_log = nil
+    #@obj = nil
   end
   
 # class inside methods

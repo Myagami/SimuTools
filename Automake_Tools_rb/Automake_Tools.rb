@@ -139,7 +139,7 @@ class AutoMake_Tools
       d_insp = @dat_inspection.ExportLog
       self.Logging_Importer('Inspector', d_insp)
       d_insp_c = self.Inspection_Error_Check(d_insp)
-
+      
       # png check
       if File.exist?(fn + '_S_src.png'.to_s) # cut and cur
         self.Logging_Importer('FileExist', 'Cur src file')
@@ -224,20 +224,29 @@ class AutoMake_Tools
 
     # export system command
     # puts "Flug: " + d_insp_c.to_s
-    if d_insp_c.to_i === 0 && cmd.nil? == false
-      puts "make"
-      #res = system(cmd.to_s)
-      stat, sout, serr = systemu cmd
-      #res = `cmd`
-      puts "out:\n" + sout
-      #self.Logging_Exporter
-      #puts '-----------------'
-    end
+    # if d_insp_c.to_i === 0 && cmd.nil? == false
+    #   puts "make"
+    #   #res = system(cmd.to_s)
+    #   stat, sout, serr = systemu cmd
+    #   #res = `cmd`
+    #   puts "out:\n" + sout
+    #   #self.Logging_Exporter
+    #   #puts '-----------------'
+    #   @dat_inspection.ClearFile
+    # end
+
+    #   puts "make"
+       #res = system(cmd.to_s)
+       stat, sout, serr = systemu cmd
+       #res = `cmd`
+       puts "out:\n" + sout
+       #self.Logging_Exporter
+       #puts '-----------------'
   end
 
   def Inspection_Error_Check(elog)
     flug = 0 
-    pp elog['Error']
+    #pp elog['Error']
     elog['Error'].each do | obj,err|
 
       if err.length.to_i >= 1 then
@@ -321,7 +330,6 @@ elsif sys == 'Linux'
     file = fev.absolute_name
     nw_time = Time.now
     if file =~ /dat|png/
-      if pr_time == 0 || pr_file == '' || pr_file != file # not founds / file missmatch
         #time / file check
         puts "Update:" + Time.now.to_s
         puts fev.flags
@@ -330,20 +338,6 @@ elsif sys == 'Linux'
         pr_time = nw_time
         pr_file = file
         puts "--------"
-      elsif (nw_time - pr_time) <=20
-        next
-      else
-        puts "Update:" + Time.now.to_s
-        puts fev.flags
-        puts "pr:" + pr_file
-        AMT.Make_Run(file, fev.flags)
-        pr_time = nw_time
-        pr_file = file
-        puts "--------"
-      end
-      #actions
-      sleep(15)
-
     end
     # puts "#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}"
   end
