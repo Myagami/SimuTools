@@ -28,11 +28,13 @@ class DatInspection
           cnf["obj"] = "next"
         elsif dat_c =~ /^#name/ #object commentout
           cnf["obj"] = "next"       
-        elsif dat_c =~ /^[-]{1,}$/ #split line
+        elsif dat_c =~ /^[-]{1,}$/ #split line and spaceline
           @obj << cnf
           #_d_puts("CT:"+ct.to_s
           ct += 1
           cnf = {}
+        elsif dat_c =~ /^$/ #spaceline
+          next
         elsif dat_c =~ /=> / #icon
           line = dat_c.split(/=> /)
           cnf[line[0]] = line[1].chomp!
