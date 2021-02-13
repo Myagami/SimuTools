@@ -134,11 +134,11 @@ class AutoMake_Tools
       fn = file.gsub(/\.dat/, '')
 
       # inspection dat
-      @dat_inspection.LoadFile(file)
-      @dat_inspection.Inspection
-      d_insp = @dat_inspection.ExportLog
-      self.Logging_Importer('Inspector', d_insp)
-      d_insp_c = self.Inspection_Error_Check(d_insp)
+      #@dat_inspection.LoadFile(file)
+      #@dat_inspection.Inspection
+      #d_insp = @dat_inspection.ExportLog
+      #self.Logging_Importer('Inspector', d_insp)
+      #d_insp_c = self.Inspection_Error_Check(d_insp)
       
       # png check
       if File.exist?(fn + '_S_src.png'.to_s) # cut and cur
@@ -203,11 +203,11 @@ class AutoMake_Tools
       
       if File.exist?(dat)
         #inspection
-        @dat_inspection.LoadFile(dat)
-        @dat_inspection.Inspection
-        d_insp = @dat_inspection.ExportLog
-        d_insp_c = self.Inspection_Error_Check(d_insp)
-        self.Logging_Importer('Inspector', d_insp)
+        #@dat_inspection.LoadFile(dat)
+        #@dat_inspection.Inspection
+        #d_insp = @dat_inspection.ExportLog
+        #d_insp_c = self.Inspection_Error_Check(d_insp)
+        #self.Logging_Importer('Inspector', d_insp)
         cmd = self.Command_Genelate(dat)
       else
         puts 'dat not found'
@@ -319,7 +319,6 @@ pr_file = ''
 pr_time = 0
 if sys == 'WSL'
   notif.watch(AMT.Get_Working_Dir, :close_write, :recursive, :attrib, :remove) do |fev|
-  
     # puts fev
     file = fev.absolute_name
     AMT.Make_Run(file, fev.flags)
