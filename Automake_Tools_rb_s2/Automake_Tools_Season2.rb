@@ -1,7 +1,6 @@
 require 'date'
 require 'dotenv'
 require 'systemu'
-Dotenv.load
 
 class Automake_Tools_Season2
   e_pak = 'pak/'
@@ -26,7 +25,10 @@ class Automake_Tools_Season2
     OptionParser.new do |opt|
       opt.on('-r value', 'role') do |path|
         @w_Dir = path
-        @e_Dir = path + '/pak/'
+        Dotenv.load(
+          File.join(@w_Dir,'.env')
+        )
+        @e_Dir = path + '/' + ENV['EXPORT'].to_s
         @e_Dir.gsub!('//', '/')
         @w_Mode = 'Router'
         #puts path
@@ -42,9 +44,10 @@ class Automake_Tools_Season2
   def SystemStatus
     # decorate start
     puts "+-------------------+"
-    puts "Mode: " + @w_Mode.to_s
+    puts "Mode: " + ENV['MODE']
     puts "Working: " + @w_Dir.to_s
     puts "Export: " + @e_Dir.to_s
+    puts "Pak: " + ENV['PAK']
     # decorate end
     puts "+-------------------+"
   end
