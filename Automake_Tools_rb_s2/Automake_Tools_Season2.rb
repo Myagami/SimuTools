@@ -52,7 +52,7 @@ class Automake_Tools_Season2
   # inotify fire
   def Get_WorkingPath
     return @w_Dir
-  end
+  end                                                                                        
 
   def WorkFlugCheck
     return @w_Flug
