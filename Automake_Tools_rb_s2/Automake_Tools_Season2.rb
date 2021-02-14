@@ -1,4 +1,7 @@
 require 'date'
+require 'dotenv'
+require 'systemu'
+Dotenv.load
 
 class Automake_Tools_Season2
   e_pak = 'pak/'
@@ -8,7 +11,8 @@ class Automake_Tools_Season2
   @w_Mode = '' # Tool Working Mode
   @on_Sys = 'Linux' # System Run envs
   @p_Time = '' # Script Start Time
-  @p_File = '' # Prev Working File 
+  @p_File = '' # Prev Working File
+  @n_File = '' # Now Working File
   @w_Flug = false # inotify worked
   @c_Flug = false # file Checked 
   def initialize # class initialize
@@ -64,20 +68,21 @@ class Automake_Tools_Season2
   
   def DatInspection(file) # dat inspection
     @c_Flug = true
+    @n_File = file
   end
 
   def FilePair(file) # png file check
     _dat= file.gsub('png','dat')
-    puts "dat:" + _dat.to_s
     if File.exist?(_dat)
       @c_Flug = true
+      @n_File = _dat
     end
   end
   
-  def CompilePak # compile pak
+  def CompilePak(file) # compile pak
     if @c_Flug == true # checked Flug
-      puts 'pak'
       cmd = self._Makeobj_Generate
+      puts "Compile Target: " + @n_File.to_s
     end
     @c_Flug = false
   end
@@ -100,6 +105,13 @@ class Automake_Tools_Season2
   
   # Create
   def _Makeobj_Generate
-    
+    cmd = ENV['MAKEOBJ'] + ' ' + ENV['PAK'] +' ' + @e_Dir.to_s + ' ' + @n_File.to_s
+
+    puts "Export Command: " + cmd
+    stat, sout, serr = systemu cmd
+
+    #puts stat
+    puts sout
+    puts serr
   end
 end

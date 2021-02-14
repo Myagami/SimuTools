@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-
+require 'bundler/setup'
 require 'Automake_Tools_Season2'
 require 'rb-inotify'
 require 'optparse'
@@ -8,7 +8,12 @@ AMT_S2 = Automake_Tools_Season2.new
 
 notif = INotify::Notifier.new
 notif.watch(AMT_S2.Get_WorkingPath, :close_write, :recursive, :delete) do |fev|
+
   file = fev.absolute_name # file path
+
+  if file =~ /^(?!(.*png|.*dat))/ #xcf | pak thorw
+    next
+  end
   up_Time = Time.now
   # status check
   if AMT_S2.WorkFlugCheck == true # checked flug
@@ -41,7 +46,7 @@ notif.watch(AMT_S2.Get_WorkingPath, :close_write, :recursive, :delete) do |fev|
     AMT_S2.FilePair(file)
   end
 
-  AMT_S2.CompilePak
+  AMT_S2.CompilePak(file)
   AMT_S2.Set_WorkingFile(file) 
   puts '---------------'
   # puts '#{@@w_Dir} / #{fev.flags} / #{fev.absolute_name}'
