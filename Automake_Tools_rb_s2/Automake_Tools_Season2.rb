@@ -7,7 +7,6 @@ class Automake_Tools_Season2
   # vars
   @w_Dir = 'test' # Working Directory
   @e_Dir = '' # Pak Export Directory
-  @w_Mode = '' # Tool Working Mode
   @on_Sys = 'Linux' # System Run envs
   @p_Time = '' # Script Start Time
   @p_File = '' # Prev Working File
@@ -23,14 +22,13 @@ class Automake_Tools_Season2
     # options
     option = {}
     OptionParser.new do |opt|
-      opt.on('-r value', 'role') do |path|
+      opt.on('-w value', 'workdir') do |path|
         @w_Dir = path
         Dotenv.load(
           File.join(@w_Dir,'.env')
         )
         @e_Dir = path + '/' + ENV['EXPORT'].to_s
         @e_Dir.gsub!('//', '/')
-        @w_Mode = 'Router'
         #puts path
       end
       opt.parse!(ARGV)
