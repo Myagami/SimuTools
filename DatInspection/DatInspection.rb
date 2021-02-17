@@ -114,6 +114,7 @@ class DatInspection
 
       #dim check
       if _type == 'extension'
+        _d_puts("\e[34m[Success]\e[0mType is extension")
         _dim = ['1','2','4','8','16']
         if dim[2].to_i == 1 || dim[2].to_i == 2 || dim[2].to_i == 4
           _d_puts("\e[34m[Success]\e[0mDim Pattern Clear " + dim[2])
@@ -123,7 +124,16 @@ class DatInspection
           _ad_inspect_log('Error',objc['name'],'Dim')
 
         end
-      elsif _type == 'extension'
+      elsif _type == 'stop'
+        _d_puts("\e[34m[Success]\e[0mType is stop")
+        if dim[2].to_i == 1 || dim[2].to_i == 2 || dim[2].to_i == 4 || dim[2].to_i == 8 || dim[2].to_i == 16
+          _d_puts("\e[34m[Success]\e[0mDim Pattern Clear " + dim[2])
+          _ad_inspect_log('Success',objc['name'],'Dim')
+        else
+          _d_puts("\e[31m[Error]\e[0mCan't use dim patter \e[4m"+ dim[2] +"\e[0m")
+          _ad_inspect_log('Error',objc['name'],'Dim')
+
+        end
       elsif _flug['type']
         _d_puts("\e[33m[Error]\e[0mCan't inspection in undefined \e[4mtype\e[0m param")
         _ad_inspect_log('Error',objc['name'],'Type')
