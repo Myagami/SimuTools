@@ -123,7 +123,7 @@ class DatInspection
           _ad_inspect_log('Error',objc['name'],'Dim')
 
         end
-        
+      elsif _type == 'extension'
       elsif _flug['type']
         _d_puts("\e[33m[Error]\e[0mCan't inspection in undefined \e[4mtype\e[0m param")
         _ad_inspect_log('Error',objc['name'],'Type')
