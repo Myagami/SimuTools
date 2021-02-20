@@ -13,7 +13,11 @@ notif.watch(AMT_S2.Get_WorkingPath, :close_write, :recursive, :delete) do |fev|
 
   if file =~ /^(?!(.*png|.*dat))/ #xcf | pak thorw
     next
+  elsif AMT_S2.Get_WorkingLockFlug(file) === true
+    puts 'Directory Locking: ' + File.dirname(file).to_s
+    next
   end
+
   up_Time = Time.now
   # status check
   if AMT_S2.WorkFlugCheck == true # checked flug

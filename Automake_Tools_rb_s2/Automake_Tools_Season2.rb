@@ -88,6 +88,15 @@ class Automake_Tools_Season2
     @c_Flug = false
   end
 
+  def Get_WorkingLockFlug(file) # directory lock file exist check
+    d_name = File.dirname(file)
+    if File.exist?(d_name.to_s + '/locking')    
+      return true    
+    else
+      return false
+    end
+  end
+  
   def Set_WorkingFile(file) # Worked File Set
     @p_File = file
   end
