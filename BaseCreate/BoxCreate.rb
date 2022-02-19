@@ -44,6 +44,8 @@ puts "Y:#{@ty_size}"
 puts "Scale:#{@scale}"
 
 #create image
+#@scale = @scale.to_i / 64
+
 Boxcre = BoxCreate.new(@tx_size,@ty_size,@scale)
 Boxcre.CreateBox(@file)
            
