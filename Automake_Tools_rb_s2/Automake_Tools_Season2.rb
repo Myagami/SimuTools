@@ -31,6 +31,16 @@ class Automake_Tools_Season2
         @e_Dir.gsub!('//', '/')
         #puts path
       end
+
+      opt.on('-m value', 'workdir') do |path|
+        @w_Dir = path
+        Dotenv.load(
+          File.join(@w_Dir,'.env')
+        )
+        @e_Dir = path + '/' + ENV['EXPORT'].to_s
+        @e_Dir.gsub!('//', '/')
+        #puts path
+      end
       opt.parse!(ARGV)
     end
 
